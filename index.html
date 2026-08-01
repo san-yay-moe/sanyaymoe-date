@@ -7,69 +7,70 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
-        body { font-family: 'Pyidaungsu', sans-serif; }
+        body { font-family: 'Pyidaungsu', sans-serif; height: 100vh; overflow: hidden; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen pb-24">
+<body class="bg-slate-50 flex flex-col h-screen">
 
     <!-- Header -->
-    <header class="bg-indigo-900 text-white py-4 px-4 text-center shadow-md">
-        <h1 class="text-xl font-bold">စမ်းရေမိုး</h1>
-        <p class="text-indigo-200 text-xs">ဇာတ်ပွဲများ အချိန်ဇယား</p>
+    <header class="bg-indigo-900 text-white py-3 px-4 text-center shadow-md flex-shrink-0">
+        <h1 class="text-sm font-bold">စမ်းရေမိုး</h1>
+        <p class="text-indigo-200 text-[9px]">ဇာတ်ပွဲများ အချိန်ဇယား</p>
     </header>
 
-    <main class="max-w-md mx-auto px-2 py-4">
-        <!-- Video Section -->
-        <section class="mb-4">
-            <div class="aspect-video w-full rounded-xl overflow-hidden shadow-sm bg-slate-900">
-                <iframe id="video-frame" class="w-full h-full" 
-                        src="https://www.youtube.com/embed/v55HWADK2MU?modestbranding=1&rel=0&controls=1&showinfo=0&iv_load_policy=3" 
-                        frameborder="0" allowfullscreen></iframe>
-            </div>
-        </section>
-
-        <!-- Main Content -->
-        <section class="bg-white rounded-xl shadow-sm border border-slate-100 p-3 mb-20">
-            <div id="data-view">
-                <table class="w-full text-xs text-left">
-                    <thead class="text-slate-400 uppercase text-[10px]">
-                        <tr>
-                            <th class="px-1 py-2">နေ့စွဲ</th>
-                            <th class="px-1 py-2">နေရာ</th>
-                            <th class="px-1 py-2">ဇာတ်</th>
-                            <th class="px-1 py-2 text-center">အခြေအနေ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="schedule-body" class="divide-y divide-slate-50"></tbody>
-                </table>
-            </div>
-
-            <div id="admin-view" class="hidden space-y-3">
-                <div id="login-form">
-                    <input id="adminPass" type="password" placeholder="Admin စကားဝှက်" class="w-full p-2 text-sm rounded-lg border border-slate-200">
-                    <button onclick="checkAdmin()" class="w-full mt-2 bg-indigo-900 text-white py-2 rounded-lg text-sm font-bold">ဝင်မည်</button>
+    <!-- Scrollable Main Content -->
+    <main class="flex-1 overflow-y-auto p-4 pb-24">
+        <div class="max-w-md mx-auto space-y-4">
+            <!-- Video Section -->
+            <section>
+                <div class="aspect-video w-full rounded-xl overflow-hidden shadow-sm bg-slate-900">
+                    <iframe id="video-frame" class="w-full h-full" 
+                            src="https://www.youtube.com/embed/v55HWADK2MU?modestbranding=1&rel=0&controls=1&showinfo=0&iv_load_policy=3" 
+                            frameborder="0" allowfullscreen></iframe>
                 </div>
-                <div id="admin-controls" class="hidden space-y-2">
-                    <h3 class="font-bold text-indigo-900 text-sm">Video ID ပြောင်းရန်</h3>
-                    <input id="videoLink" type="text" placeholder="ဥပမာ v55HWADK2MU" class="w-full p-2 text-sm rounded-lg border">
-                    <button onclick="updateVideo()" class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm">Video အပ်ဒိတ်</button>
-                    <hr>
-                    <h3 class="font-bold text-indigo-900 text-sm">ပွဲအသစ်</h3>
-                    <input id="dateInput" type="text" placeholder="DD/MM/YYYY" class="w-full p-2 text-sm rounded-lg border">
-                    <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2 text-sm rounded-lg border">
-                    <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2 text-sm rounded-lg border">
-                    <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-2 rounded-lg text-sm font-bold">ထည့်မည်</button>
+            </section>
+
+            <!-- Table Section -->
+            <section class="bg-white rounded-xl shadow-sm border border-slate-100 p-3">
+                <div id="data-view">
+                    <table class="w-full text-[11px] text-left">
+                        <thead class="text-slate-400 uppercase text-[9px]">
+                            <tr>
+                                <th class="px-1 py-2">ရက်စွဲ</th>
+                                <th class="px-1 py-2">နေရာ</th>
+                                <th class="px-1 py-2">ဇာတ်</th>
+                                <th class="px-1 py-2 text-center">လုပ်ဆောင်ချက်</th>
+                            </tr>
+                        </thead>
+                        <tbody id="schedule-body" class="divide-y divide-slate-100"></tbody>
+                    </table>
                 </div>
-            </div>
-        </section>
+
+                <div id="admin-view" class="hidden space-y-3">
+                    <div id="login-form">
+                        <input id="adminPass" type="password" placeholder="Admin စကားဝှက်" class="w-full p-2 text-xs rounded-lg border">
+                        <button onclick="checkAdmin()" class="w-full mt-2 bg-indigo-900 text-white py-2 rounded-lg text-xs font-bold">ဝင်မည်</button>
+                    </div>
+                    <div id="admin-controls" class="hidden space-y-2">
+                        <input id="videoLink" type="text" placeholder="Video ID (ဥပမာ v55HWADK2MU)" class="w-full p-2 text-xs rounded-lg border">
+                        <button onclick="updateVideo()" class="w-full bg-blue-600 text-white py-2 rounded-lg text-xs">Video အပ်ဒိတ်</button>
+                        <hr>
+                        <input id="dateInput" type="text" placeholder="DD/MM/YYYY" class="w-full p-2 text-xs rounded-lg border">
+                        <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2 text-xs rounded-lg border">
+                        <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2 text-xs rounded-lg border">
+                        <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-2 rounded-lg text-xs font-bold">ထည့်မည်</button>
+                    </div>
+                </div>
+            </section>
+        </div>
     </main>
 
     <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 p-1 shadow-2xl z-50">
-        <div class="flex gap-1 max-w-md mx-auto">
-            <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-2 text-xs font-bold rounded-lg bg-indigo-900 text-white">လာမည့်</button>
-            <button onclick="switchTab('done')" id="tab-done" class="flex-1 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-500">ပြီးဆုံး</button>
-            <button onclick="switchTab('admin')" id="tab-admin" class="flex-1 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-500">Admin</button>
+    <nav class="fixed bottom-0 left-0 w-full bg-white border-t p-2 shadow-2xl z-50">
+        <div class="flex gap-2 max-w-md mx-auto">
+            <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-2 text-[10px] font-bold rounded-lg bg-indigo-900 text-white">လာမည့်ပွဲ</button>
+            <button onclick="switchTab('done')" id="tab-done" class="flex-1 py-2 text-[10px] font-bold rounded-lg bg-slate-100 text-slate-500">ပြီးဆုံးပွဲ</button>
+            <button onclick="switchTab('admin')" id="tab-admin" class="flex-1 py-2 text-[10px] font-bold rounded-lg bg-slate-100 text-slate-500">Admin</button>
         </div>
     </nav>
 
@@ -94,7 +95,7 @@
             currentTab = tab;
             ['active', 'done', 'admin'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
-                btn.className = (currentTab === t) ? 'flex-1 py-2 text-xs font-bold rounded-lg bg-indigo-900 text-white' : 'flex-1 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-500';
+                btn.className = (currentTab === t) ? 'flex-1 py-2 text-[10px] font-bold rounded-lg bg-indigo-900 text-white' : 'flex-1 py-2 text-[10px] font-bold rounded-lg bg-slate-100 text-slate-500';
             });
             document.getElementById('data-view').classList.toggle('hidden', currentTab === 'admin');
             document.getElementById('admin-view').classList.toggle('hidden', currentTab !== 'admin');
@@ -111,16 +112,24 @@
         };
 
         window.addEvent = async () => {
-            const date = document.getElementById('dateInput').value, location = document.getElementById('locInput').value, troupe = document.getElementById('troupeInput').value;
-            if (!date || !location || !troupe) return alert("အချက်အလက်ပြည့်စုံအောင်ဖြည့်ပေးပါ။");
+            const date = document.getElementById('dateInput').value;
+            const location = document.getElementById('locInput').value;
+            const troupe = document.getElementById('troupeInput').value;
+            
+            if (!date || !location || !troupe) return;
+
+            // Check if date exists
+            if (allEvents.some(e => e.date === date)) {
+                alert("ဒီနေ့အတွက် ပွဲစဉ် ရှိနှင့်ပြီးသား ဖြစ်ပါတယ်");
+                return;
+            }
+
             await addDoc(collection(db, "events"), { date, location, troupe, completed: false, timestamp: new Date().getTime() });
-            alert("ထည့်ပြီးပါပြီ။");
         };
 
         window.updateVideo = async () => {
             const vidId = document.getElementById('videoLink').value;
             await setDoc(doc(db, "settings", "video"), { url: `https://www.youtube.com/embed/${vidId}?modestbranding=1&rel=0&controls=1&iv_load_policy=3` });
-            alert("Video ပြောင်းလဲပြီးပါပြီ။");
         };
 
         window.markCompleted = async (id) => await updateDoc(doc(db, "events", id), { completed: true });
@@ -129,22 +138,23 @@
         function renderEvents() {
             const container = document.getElementById('schedule-body');
             const filtered = allEvents.filter(e => currentTab === 'active' ? !e.completed : e.completed);
+            
+            // Sort by date: DD/MM/YYYY
             const sorted = filtered.sort((a, b) => {
-                const pA = a.date.split('/'), pB = b.date.split('/');
-                const dA = new Date(pA[2], pA[1]-1, pA[0]), dB = new Date(pB[2], pB[1]-1, pB[0]);
-                return dA - dB;
+                const pA = a.date.split('/'); const pB = b.date.split('/');
+                return new Date(pA[2], pA[1]-1, pA[0]) - new Date(pB[2], pB[1]-1, pB[0]);
             });
 
             container.innerHTML = sorted.length ? sorted.map(e => `
-                <tr class="hover:bg-slate-50">
+                <tr>
                     <td class="px-1 py-3 text-slate-600">${e.date}</td>
                     <td class="px-1 py-3 font-bold">${e.location}</td>
                     <td class="px-1 py-3">${e.troupe}</td>
-                    <td class="px-1 py-3 text-center text-[10px]">
-                        ${isAdmin ? `<button onclick="markCompleted('${e.id}')" class="text-green-600 px-1 font-bold">✔️</button><button onclick="deleteEvent('${e.id}')" class="text-red-600 px-1 font-bold">❌</button>` : (e.completed ? '✅' : '🔥')}
+                    <td class="px-1 py-3 text-center">
+                        ${isAdmin ? `<button onclick="markCompleted('${e.id}')" class="text-green-600 px-1">✔️</button><button onclick="deleteEvent('${e.id}')" class="text-red-600 px-1">❌</button>` : (e.completed ? '✅' : '🔥')}
                     </td>
                 </tr>
-            `).join('') : '<tr><td colspan="4" class="text-center py-4 text-slate-400 text-xs">ပွဲစဉ်မရှိသေးပါ။</td></tr>';
+            `).join('') : '<tr><td colspan="4" class="text-center py-4 text-slate-400 text-[10px]">ပွဲစဉ်မရှိသေးပါ။</td></tr>';
         }
 
         onSnapshot(query(collection(db, "events")), (s) => {
