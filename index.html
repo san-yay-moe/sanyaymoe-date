@@ -8,8 +8,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
         body { font-family: 'Pyidaungsu', sans-serif; height: 100vh; overflow: hidden; }
-        /* ဇယားအတွက် သီးသန့် Scrollbar - Main scroll မဖြစ်အောင် တားထားသည် */
-        .table-container { max-height: 35vh; overflow-y: auto; }
+        .table-container { max-height: 55vh; overflow-y: auto; }
     </style>
 </head>
 <body class="bg-slate-50 flex flex-col h-screen">
@@ -21,14 +20,6 @@
 
     <main class="flex-1 p-4 overflow-hidden">
         <div class="max-w-md mx-auto h-full flex flex-col space-y-4">
-            <!-- Video Section -->
-            <section class="flex-shrink-0">
-                <div class="aspect-video w-full rounded-xl overflow-hidden shadow-sm bg-slate-900">
-                    <iframe id="video-frame" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
-                </div>
-            </section>
-
-            <!-- Table Section -->
             <section class="bg-white rounded-xl shadow-sm border border-slate-100 p-3 flex-1 flex flex-col overflow-hidden">
                 <div id="data-view" class="flex flex-col h-full">
                     <input type="text" id="searchInput" placeholder="ရက်စွဲ (သို့) နေရာဖြင့် ရှာရန်..." 
@@ -49,17 +40,13 @@
                     </div>
                 </div>
 
-                <!-- Admin Section -->
                 <div id="admin-view" class="hidden space-y-3">
                     <div id="login-form">
                         <input id="adminPass" type="password" placeholder="Admin စကားဝှက်" class="w-full p-2 text-xs rounded-lg border">
                         <button onclick="checkAdmin()" class="w-full mt-2 bg-indigo-900 text-white py-2 rounded-lg text-xs font-bold">ဝင်မည်</button>
                     </div>
                     <div id="admin-controls" class="hidden space-y-2">
-                        <input id="playlistId" type="text" placeholder="Playlist ID (ဥပမာ PLxxxxxxx)" class="w-full p-2 text-xs rounded-lg border">
-                        <button onclick="updateVideo()" class="w-full bg-blue-600 text-white py-2 rounded-lg text-xs">Playlist အပ်ဒိတ်</button>
-                        <hr>
-                        <input id="dateInput" type="text" placeholder="DD/MM/YYYY" class="w-full p-2 text-xs rounded-lg border">
+                        <input id="dateInput" type="date" class="w-full p-2 text-xs rounded-lg border">
                         <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2 text-xs rounded-lg border">
                         <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2 text-xs rounded-lg border">
                         <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-2 rounded-lg text-xs font-bold">ထည့်မည်</button>
@@ -69,7 +56,6 @@
         </div>
     </main>
 
-    <!-- Navigation -->
     <nav class="fixed bottom-0 left-0 w-full bg-white border-t p-2 shadow-2xl z-50">
         <div class="flex gap-2 max-w-md mx-auto">
             <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-2 text-[10px] font-bold rounded-lg bg-indigo-900 text-white">လာမည့်</button>
@@ -80,7 +66,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, doc, updateDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBbRZLUYHeVThoCscb2ul_JURGsfBjCF4s",
@@ -116,19 +102,15 @@
         };
 
         window.addEvent = async () => {
-            const date = document.getElementById('dateInput').value;
+            const rawDate = document.getElementById('dateInput').value;
+            if (!rawDate) return;
+            const d = new Date(rawDate);
+            const date = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`;
             const location = document.getElementById('locInput').value;
             const troupe = document.getElementById('troupeInput').value;
-            if (!date || !location || !troupe) return;
-            if (allEvents.some(e => e.date === date)) { alert("ဒီရက်စွဲအတွက် ပွဲစဉ် ရှိနှင့်ပြီးသား ဖြစ်ပါတယ်"); return; }
-            await addDoc(collection(db, "events"), { date, location, troupe, completed: false });
-        };
-
-        window.updateVideo = async () => {
-            const playlistId = document.getElementById('playlistId').value;
-            // Playlist အတွက် URL တည်ဆောက်ပုံ
-            const cleanUrl = `https://www.youtube.com/embed/videoseries?list=${playlistId}&modestbranding=1&rel=0`;
-            await setDoc(doc(db, "settings", "video"), { url: cleanUrl });
+            if (!location || !troupe) return;
+            
+            await addDoc(collection(db, "events"), { date, location, troupe, completed: false, sortDate: rawDate });
         };
 
         window.markCompleted = async (id) => await updateDoc(doc(db, "events", id), { completed: true });
@@ -143,10 +125,7 @@
                 filtered = filtered.filter(e => e.date.toLowerCase().includes(search) || e.location.toLowerCase().includes(search));
             }
             
-            const sorted = filtered.sort((a, b) => {
-                const pA = a.date.split('/'); const pB = b.date.split('/');
-                return new Date(pA[2], pA[1]-1, pA[0]) - new Date(pB[2], pB[1]-1, pB[0]);
-            });
+            const sorted = filtered.sort((a, b) => new Date(a.sortDate || '1970-01-01') - new Date(b.sortDate || '1970-01-01'));
 
             container.innerHTML = sorted.length ? sorted.map(e => `
                 <tr>
@@ -162,9 +141,6 @@
 
         onSnapshot(query(collection(db, "events")), (s) => {
             allEvents = []; s.forEach(d => allEvents.push({ id: d.id, ...d.data() })); renderEvents();
-        });
-        onSnapshot(doc(db, "settings", "video"), (d) => {
-            if(d.exists()) document.getElementById('video-frame').src = d.data().url;
         });
     </script>
 </body>
