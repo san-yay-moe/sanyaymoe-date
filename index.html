@@ -25,7 +25,7 @@
         <section class="mb-6">
             <div class="aspect-video w-full rounded-2xl overflow-hidden shadow-md bg-slate-900">
                 <iframe id="video-frame" class="w-full h-full" 
-                        src="https://www.youtube.com/embed/v55HWADK2MU?modestbranding=1&rel=0&showinfo=0&controls=1&iv_load_policy=3" 
+                        src="https://www.youtube.com/embed/v55HWADK2MU?modestbranding=1&rel=0&showinfo=0&controls=1&iv_load_policy=3&disablekb=1&fs=1&playsinline=1" 
                         frameborder="0" allowfullscreen></iframe>
             </div>
         </section>
@@ -58,7 +58,7 @@
                 <input id="videoLink" type="text" placeholder="Video ID (e.g. v55HWADK2MU)" class="w-full p-2.5 rounded-xl border">
                 <button onclick="updateVideo()" class="w-full bg-blue-600 text-white py-2 rounded-xl text-sm">ဗီဒီယို ပြောင်းမည်</button>
                 <div class="my-2 border-t pt-2">
-                    <input id="dateInput" type="text" placeholder="နေ့စွဲ" class="w-full p-2.5 rounded-xl border mb-2">
+                    <input id="dateInput" type="text" placeholder="နေ့စွဲ (ဥပမာ: 01/08/2026)" class="w-full p-2.5 rounded-xl border mb-2">
                     <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2.5 rounded-xl border mb-2">
                     <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2.5 rounded-xl border mb-2">
                     <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-bold">ပွဲစဉ် တင်မည်</button>
@@ -106,14 +106,14 @@
             const location = document.getElementById('locInput').value;
             const troupe = document.getElementById('troupeInput').value;
             if (!date || !location || !troupe) return notify("အချက်အလက်ဖြည့်ပါ။");
-            await addDoc(collection(db, "events"), { date, location, troupe, completed: false });
+            await addDoc(collection(db, "events"), { date, location, troupe, completed: false, timestamp: new Date().getTime() });
             notify("ပွဲစဉ် တင်ပြီးပါပြီ။");
         };
 
         window.updateVideo = async () => {
             const vidId = document.getElementById('videoLink').value;
             if(!vidId) return;
-            const url = `https://www.youtube.com/embed/${vidId}?modestbranding=1&rel=0&showinfo=0&controls=1&iv_load_policy=3`;
+            const url = `https://www.youtube.com/embed/${vidId}?modestbranding=1&rel=0&showinfo=0&controls=1&iv_load_policy=3&disablekb=1&fs=1&playsinline=1`;
             await setDoc(doc(db, "settings", "video"), { url });
             notify("ဗီဒီယို ပြောင်းလဲပြီးပါပြီ။");
         };
@@ -129,7 +129,14 @@
         function renderEvents(events) {
             const container = document.getElementById('schedule-body');
             container.innerHTML = '';
-            const sorted = events.sort((a, b) => a.completed - b.completed);
+            
+            // ရက်စွဲအလိုက် စီပေးခြင်း (DD/MM/YYYY ပုံစံဖြင့်)
+            const sorted = events.sort((a, b) => {
+                if (a.completed !== b.completed) return a.completed - b.completed;
+                const dateA = a.date.split('/').reverse().join('');
+                const dateB = b.date.split('/').reverse().join('');
+                return dateA.localeCompare(dateB);
+            });
             
             if(sorted.length === 0) return container.innerHTML = '<tr><td colspan="4" class="text-slate-400 text-center py-4">ပွဲစဉ်မရှိသေးပါ။</td></tr>';
 
