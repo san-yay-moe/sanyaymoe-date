@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>စမ်းရေမိုး - ဇာတ်ပွဲအချိန်ဇယား</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
         body { font-family: 'Pyidaungsu', sans-serif; }
     </style>
 </head>
@@ -24,27 +24,27 @@
     <main class="max-w-md mx-auto px-4 py-6">
         <section class="mb-6">
             <div class="aspect-video w-full rounded-2xl overflow-hidden shadow-md bg-slate-900">
-                <iframe id="video-frame" class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe id="video-frame" class="w-full h-full" 
+                        src="https://www.youtube.com/embed/v55HWADK2MU?modestbranding=1&rel=0&showinfo=0&controls=1&iv_load_policy=3" 
+                        frameborder="0" allowfullscreen></iframe>
             </div>
         </section>
 
         <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-6">
             <h2 class="text-lg font-bold mb-4 text-indigo-900 text-center">📅 ပွဲစဉ်ဇယား</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                    <thead class="text-xs text-slate-500 uppercase bg-slate-50">
-                        <tr>
-                            <th class="px-2 py-3">နေ့စွဲ</th>
-                            <th class="px-2 py-3">နေရာ</th>
-                            <th class="px-2 py-3">ဇာတ်အဖွဲ့</th>
-                            <th class="px-2 py-3 text-center">လုပ်ဆောင်ချက်</th>
-                        </tr>
-                    </thead>
-                    <tbody id="schedule-body" class="divide-y divide-slate-100">
-                        <tr><td colspan="4" class="text-slate-400 text-center py-4">Data များတင်နေသည်...</td></tr>
-                    </tbody>
-                </table>
-            </div>
+            <table class="w-full text-sm text-left">
+                <thead class="text-xs text-slate-500 uppercase bg-slate-50">
+                    <tr>
+                        <th class="px-2 py-3">နေ့စွဲ</th>
+                        <th class="px-2 py-3">နေရာ</th>
+                        <th class="px-2 py-3">ဇာတ်အဖွဲ့</th>
+                        <th class="px-2 py-3 text-center">လုပ်ဆောင်ချက်</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-body" class="divide-y divide-slate-100">
+                    <tr><td colspan="4" class="text-slate-400 text-center py-4">Data များတင်နေသည်...</td></tr>
+                </tbody>
+            </table>
         </section>
 
         <section id="admin-section" class="mt-8">
@@ -55,10 +55,10 @@
             
             <div id="admin-controls" class="hidden bg-white p-5 rounded-2xl shadow-sm border border-indigo-100 space-y-3">
                 <h3 class="font-bold text-indigo-900 border-b pb-2">Admin Control</h3>
-                <input id="videoLink" type="text" placeholder="YouTube Embed URL အသစ်" class="w-full p-2.5 rounded-xl border">
+                <input id="videoLink" type="text" placeholder="Video ID (e.g. v55HWADK2MU)" class="w-full p-2.5 rounded-xl border">
                 <button onclick="updateVideo()" class="w-full bg-blue-600 text-white py-2 rounded-xl text-sm">ဗီဒီယို ပြောင်းမည်</button>
                 <div class="my-2 border-t pt-2">
-                    <input id="dateInput" type="text" placeholder="နေ့စွဲ (ဥပမာ- ၁၂.၅.၂၀၂၆)" class="w-full p-2.5 rounded-xl border mb-2">
+                    <input id="dateInput" type="text" placeholder="နေ့စွဲ" class="w-full p-2.5 rounded-xl border mb-2">
                     <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2.5 rounded-xl border mb-2">
                     <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2.5 rounded-xl border mb-2">
                     <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-bold">ပွဲစဉ် တင်မည်</button>
@@ -97,66 +97,56 @@
                 isAdmin = true;
                 document.getElementById('login-form').classList.add('hidden');
                 document.getElementById('admin-controls').classList.remove('hidden');
-                renderEvents(window.currentEvents || []);
-                notify("Admin အဖြစ် ဝင်ရောက်သွားပါသည်။");
-            } else notify("စကားဝှက်မှားနေပါသည်။");
+                notify("Admin ဝင်ရောက်သွားပါသည်။");
+            } else notify("စကားဝှက်မှားပါသည်။");
         };
 
         window.addEvent = async () => {
             const date = document.getElementById('dateInput').value;
             const location = document.getElementById('locInput').value;
             const troupe = document.getElementById('troupeInput').value;
-            if (!date || !location || !troupe) { notify("အချက်အလက်အားလုံးဖြည့်ပါ။"); return; }
+            if (!date || !location || !troupe) return notify("အချက်အလက်ဖြည့်ပါ။");
             await addDoc(collection(db, "events"), { date, location, troupe, completed: false });
             notify("ပွဲစဉ် တင်ပြီးပါပြီ။");
         };
 
         window.updateVideo = async () => {
-            const link = document.getElementById('videoLink').value;
-            if(!link) return;
-            await setDoc(doc(db, "settings", "video"), { url: link });
+            const vidId = document.getElementById('videoLink').value;
+            if(!vidId) return;
+            const url = `https://www.youtube.com/embed/${vidId}?modestbranding=1&rel=0&showinfo=0&controls=1&iv_load_policy=3`;
+            await setDoc(doc(db, "settings", "video"), { url });
             notify("ဗီဒီယို ပြောင်းလဲပြီးပါပြီ။");
         };
 
         window.markCompleted = async (id) => {
             await updateDoc(doc(db, "events", id), { completed: true });
-            notify("ပွဲပြီးဆုံးကြောင်း အမှတ်အသားပြုပြီးပါပြီ။");
         };
 
         window.deleteEvent = async (id) => {
             await deleteDoc(doc(db, "events", id));
-            notify("ပွဲစဉ် ဖျက်ပြီးပါပြီ။");
         };
 
         function renderEvents(events) {
-            window.currentEvents = events;
             const container = document.getElementById('schedule-body');
             container.innerHTML = '';
             const sorted = events.sort((a, b) => a.completed - b.completed);
             
-            if(sorted.length === 0) {
-                container.innerHTML = '<tr><td colspan="4" class="text-slate-400 text-center py-4">ပွဲစဉ်များ မရှိသေးပါ။</td></tr>';
-                return;
-            }
+            if(sorted.length === 0) return container.innerHTML = '<tr><td colspan="4" class="text-slate-400 text-center py-4">ပွဲစဉ်မရှိသေးပါ။</td></tr>';
 
             sorted.forEach((e) => {
                 const isDone = e.completed;
                 container.innerHTML += `
-                    <tr class="${isDone ? 'opacity-50 bg-slate-50' : ''}">
-                        <td class="px-2 py-3 font-medium">${e.date}</td>
+                    <tr class="${isDone ? 'opacity-40' : ''}">
+                        <td class="px-2 py-3">${e.date}</td>
                         <td class="px-2 py-3">${e.location}</td>
                         <td class="px-2 py-3">${e.troupe}</td>
-                        <td class="px-2 py-3 text-center space-y-1">
-                            ${isAdmin ? (
-                                isDone ? `
-                                    <button onclick="deleteEvent('${e.id}')" class="block w-full bg-red-500 text-white text-[10px] px-1 py-1 rounded">ဖျက်</button>
-                                ` : `
-                                    <button onclick="markCompleted('${e.id}')" class="block w-full bg-emerald-600 text-white text-[10px] px-1 py-1 rounded">ပြီးဆုံး</button>
-                                    <button onclick="deleteEvent('${e.id}')" class="block w-full bg-red-500 text-white text-[10px] px-1 py-1 rounded">ဖျက်</button>
-                                `
-                            ) : (
-                                isDone ? `<span class="text-slate-400 text-[10px]">ပြီး</span>` : `<span class="text-emerald-600 font-bold text-[10px]">ပွဲရှိ</span>`
-                            )}
+                        <td class="px-2 py-3 text-center">
+                            ${isAdmin ? `
+                                <div class="flex flex-col gap-1">
+                                    ${!isDone ? `<button onclick="markCompleted('${e.id}')" class="bg-emerald-600 text-white text-[10px] px-2 py-1 rounded">ပြီးဆုံး</button>` : ''}
+                                    <button onclick="deleteEvent('${e.id}')" class="bg-red-500 text-white text-[10px] px-2 py-1 rounded">ဖျက်</button>
+                                </div>
+                            ` : (isDone ? `<span class="text-slate-400 text-[10px]">ပြီး</span>` : `<span class="text-emerald-600 font-bold text-[10px]">ပွဲရှိ</span>`)}
                         </td>
                     </tr>`;
             });
