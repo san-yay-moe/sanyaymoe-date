@@ -13,63 +13,63 @@
 <body class="bg-slate-50 text-slate-800 min-h-screen pb-24">
 
     <!-- Header -->
-    <header class="bg-indigo-900 text-white py-6 px-4 text-center shadow-lg">
-        <h1 class="text-2xl font-bold">စမ်းရေမိုး</h1>
-        <p class="text-indigo-200 text-sm">ဇာတ်ပွဲများ အချိန်ဇယား</p>
+    <header class="bg-indigo-900 text-white py-4 px-4 text-center shadow-md">
+        <h1 class="text-xl font-bold">စမ်းရေမိုး</h1>
+        <p class="text-indigo-200 text-xs">ဇာတ်ပွဲများ အချိန်ဇယား</p>
     </header>
 
-    <main class="max-w-md mx-auto px-4 py-6">
+    <main class="max-w-md mx-auto px-2 py-4">
         <!-- Video Section -->
-        <section class="mb-6">
-            <div class="aspect-video w-full rounded-2xl overflow-hidden shadow-md bg-slate-900">
+        <section class="mb-4">
+            <div class="aspect-video w-full rounded-xl overflow-hidden shadow-sm bg-slate-900">
                 <iframe id="video-frame" class="w-full h-full" 
-                        src="https://www.youtube.com/embed/v55HWADK2MU?modestbranding=1&rel=0&controls=1&showinfo=0" 
+                        src="https://www.youtube.com/embed/v55HWADK2MU?modestbranding=1&rel=0&controls=1&showinfo=0&iv_load_policy=3" 
                         frameborder="0" allowfullscreen></iframe>
             </div>
         </section>
 
         <!-- Main Content -->
-        <section id="content-area" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-20">
+        <section class="bg-white rounded-xl shadow-sm border border-slate-100 p-3 mb-20">
             <div id="data-view">
-                <table class="w-full text-sm text-left">
-                    <thead class="text-xs text-slate-500 uppercase">
+                <table class="w-full text-xs text-left">
+                    <thead class="text-slate-400 uppercase text-[10px]">
                         <tr>
-                            <th class="px-2 py-3">နေ့စွဲ</th>
-                            <th class="px-2 py-3">နေရာ</th>
-                            <th class="px-2 py-3">ဇာတ်</th>
-                            <th class="px-2 py-3 text-center">အခြေအနေ</th>
+                            <th class="px-1 py-2">နေ့စွဲ</th>
+                            <th class="px-1 py-2">နေရာ</th>
+                            <th class="px-1 py-2">ဇာတ်</th>
+                            <th class="px-1 py-2 text-center">အခြေအနေ</th>
                         </tr>
                     </thead>
-                    <tbody id="schedule-body" class="divide-y divide-slate-100"></tbody>
+                    <tbody id="schedule-body" class="divide-y divide-slate-50"></tbody>
                 </table>
             </div>
 
-            <div id="admin-view" class="hidden space-y-4">
+            <div id="admin-view" class="hidden space-y-3">
                 <div id="login-form">
-                    <input id="adminPass" type="password" placeholder="Admin စကားဝှက်" class="w-full p-3 mb-3 rounded-xl border border-slate-200">
-                    <button onclick="checkAdmin()" class="w-full bg-indigo-900 text-white py-2.5 rounded-xl font-bold">ဝင်မည်</button>
+                    <input id="adminPass" type="password" placeholder="Admin စကားဝှက်" class="w-full p-2 text-sm rounded-lg border border-slate-200">
+                    <button onclick="checkAdmin()" class="w-full mt-2 bg-indigo-900 text-white py-2 rounded-lg text-sm font-bold">ဝင်မည်</button>
                 </div>
-                <div id="admin-controls" class="hidden space-y-3">
-                    <h3 class="font-bold text-indigo-900">Video ပြောင်းရန် (ID)</h3>
-                    <input id="videoLink" type="text" placeholder="ဥပမာ v55HWADK2MU" class="w-full p-2.5 rounded-xl border">
-                    <button onclick="updateVideo()" class="w-full bg-blue-600 text-white py-2 rounded-xl text-sm">Video ပြောင်းမည်</button>
+                <div id="admin-controls" class="hidden space-y-2">
+                    <h3 class="font-bold text-indigo-900 text-sm">Video ID ပြောင်းရန်</h3>
+                    <input id="videoLink" type="text" placeholder="ဥပမာ v55HWADK2MU" class="w-full p-2 text-sm rounded-lg border">
+                    <button onclick="updateVideo()" class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm">Video အပ်ဒိတ်</button>
                     <hr>
-                    <h3 class="font-bold text-indigo-900">ပွဲအသစ်ထည့်ရန်</h3>
-                    <input id="dateInput" type="text" placeholder="DD/MM/YYYY" class="w-full p-2.5 rounded-xl border">
-                    <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2.5 rounded-xl border">
-                    <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2.5 rounded-xl border">
-                    <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-bold">ထည့်မည်</button>
+                    <h3 class="font-bold text-indigo-900 text-sm">ပွဲအသစ်</h3>
+                    <input id="dateInput" type="text" placeholder="DD/MM/YYYY" class="w-full p-2 text-sm rounded-lg border">
+                    <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2 text-sm rounded-lg border">
+                    <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2 text-sm rounded-lg border">
+                    <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-2 rounded-lg text-sm font-bold">ထည့်မည်</button>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Bottom Navigation Tabs -->
-    <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 p-2 shadow-2xl z-50">
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 w-full bg-white border-t border-slate-200 p-1 shadow-2xl z-50">
         <div class="flex gap-1 max-w-md mx-auto">
-            <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-3 text-sm font-bold rounded-xl bg-indigo-900 text-white">လာမည့်</button>
-            <button onclick="switchTab('done')" id="tab-done" class="flex-1 py-3 text-sm font-bold rounded-xl bg-slate-100 text-slate-500">ပြီးဆုံး</button>
-            <button onclick="switchTab('admin')" id="tab-admin" class="flex-1 py-3 text-sm font-bold rounded-xl bg-slate-100 text-slate-500">Admin</button>
+            <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-2 text-xs font-bold rounded-lg bg-indigo-900 text-white">လာမည့်</button>
+            <button onclick="switchTab('done')" id="tab-done" class="flex-1 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-500">ပြီးဆုံး</button>
+            <button onclick="switchTab('admin')" id="tab-admin" class="flex-1 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-500">Admin</button>
         </div>
     </nav>
 
@@ -94,11 +94,7 @@
             currentTab = tab;
             ['active', 'done', 'admin'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
-                if (currentTab === t) {
-                    btn.className = 'flex-1 py-3 text-sm font-bold rounded-xl bg-indigo-900 text-white';
-                } else {
-                    btn.className = 'flex-1 py-3 text-sm font-bold rounded-xl bg-slate-100 text-slate-500';
-                }
+                btn.className = (currentTab === t) ? 'flex-1 py-2 text-xs font-bold rounded-lg bg-indigo-900 text-white' : 'flex-1 py-2 text-xs font-bold rounded-lg bg-slate-100 text-slate-500';
             });
             document.getElementById('data-view').classList.toggle('hidden', currentTab === 'admin');
             document.getElementById('admin-view').classList.toggle('hidden', currentTab !== 'admin');
@@ -123,7 +119,7 @@
 
         window.updateVideo = async () => {
             const vidId = document.getElementById('videoLink').value;
-            await setDoc(doc(db, "settings", "video"), { url: `https://www.youtube.com/embed/${vidId}?modestbranding=1&rel=0&controls=1` });
+            await setDoc(doc(db, "settings", "video"), { url: `https://www.youtube.com/embed/${vidId}?modestbranding=1&rel=0&controls=1&iv_load_policy=3` });
             alert("Video ပြောင်းလဲပြီးပါပြီ။");
         };
 
@@ -133,8 +129,6 @@
         function renderEvents() {
             const container = document.getElementById('schedule-body');
             const filtered = allEvents.filter(e => currentTab === 'active' ? !e.completed : e.completed);
-            
-            // Sort by Date (DD/MM/YYYY)
             const sorted = filtered.sort((a, b) => {
                 const pA = a.date.split('/'), pB = b.date.split('/');
                 const dA = new Date(pA[2], pA[1]-1, pA[0]), dB = new Date(pB[2], pB[1]-1, pB[0]);
@@ -142,15 +136,15 @@
             });
 
             container.innerHTML = sorted.length ? sorted.map(e => `
-                <tr>
-                    <td class="px-2 py-3">${e.date}</td>
-                    <td class="px-2 py-3">${e.location}</td>
-                    <td class="px-2 py-3">${e.troupe}</td>
-                    <td class="px-2 py-3 text-center text-xs">
-                        ${isAdmin ? `<button onclick="markCompleted('${e.id}')" class="text-green-600 font-bold px-1">ပြီး</button> | <button onclick="deleteEvent('${e.id}')" class="text-red-600 font-bold px-1">ဖျက်</button>` : (e.completed ? '✅' : '🔥')}
+                <tr class="hover:bg-slate-50">
+                    <td class="px-1 py-3 text-slate-600">${e.date}</td>
+                    <td class="px-1 py-3 font-bold">${e.location}</td>
+                    <td class="px-1 py-3">${e.troupe}</td>
+                    <td class="px-1 py-3 text-center text-[10px]">
+                        ${isAdmin ? `<button onclick="markCompleted('${e.id}')" class="text-green-600 px-1 font-bold">✔️</button><button onclick="deleteEvent('${e.id}')" class="text-red-600 px-1 font-bold">❌</button>` : (e.completed ? '✅' : '🔥')}
                     </td>
                 </tr>
-            `).join('') : '<tr><td colspan="4" class="text-center py-4 text-slate-400">ပွဲစဉ်မရှိသေးပါ။</td></tr>';
+            `).join('') : '<tr><td colspan="4" class="text-center py-4 text-slate-400 text-xs">ပွဲစဉ်မရှိသေးပါ။</td></tr>';
         }
 
         onSnapshot(query(collection(db, "events")), (s) => {
