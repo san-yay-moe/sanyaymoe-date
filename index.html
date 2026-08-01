@@ -24,7 +24,7 @@
     <main class="max-w-md mx-auto px-4 py-6">
         <section class="mb-6">
             <div class="aspect-video w-full rounded-2xl overflow-hidden shadow-md bg-slate-900">
-                <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe id="video-frame" class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </section>
 
@@ -37,13 +37,11 @@
                             <th class="px-2 py-3">နေ့စွဲ</th>
                             <th class="px-2 py-3">နေရာ</th>
                             <th class="px-2 py-3">ဇာတ်အဖွဲ့</th>
-                            <th class="px-2 py-3 text-center">အခြေအနေ</th>
+                            <th class="px-2 py-3 text-center">လုပ်ဆောင်ချက်</th>
                         </tr>
                     </thead>
                     <tbody id="schedule-body" class="divide-y divide-slate-100">
-                        <tr>
-                            <td colspan="4" class="text-slate-400 text-center py-4">Data များတင်နေသည်...</td>
-                        </tr>
+                        <tr><td colspan="4" class="text-slate-400 text-center py-4">Data များတင်နေသည်...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -56,19 +54,23 @@
             </div>
             
             <div id="admin-controls" class="hidden bg-white p-5 rounded-2xl shadow-sm border border-indigo-100 space-y-3">
-                <h3 class="font-bold text-indigo-900">Admin Control</h3>
-                <input id="dateInput" type="text" placeholder="နေ့စွဲ (ဥပမာ - ၁-၁၁-၂၀၂၆)" class="w-full p-2.5 rounded-xl border">
-                <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2.5 rounded-xl border">
-                <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2.5 rounded-xl border">
-                <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-bold">ပွဲစဉ် တင်မည်</button>
-                <button onclick="location.reload()" class="w-full text-slate-400 py-2 text-xs">Admin မှ ထွက်မည်</button>
+                <h3 class="font-bold text-indigo-900 border-b pb-2">Admin Control</h3>
+                <input id="videoLink" type="text" placeholder="YouTube Embed URL အသစ်" class="w-full p-2.5 rounded-xl border">
+                <button onclick="updateVideo()" class="w-full bg-blue-600 text-white py-2 rounded-xl text-sm">ဗီဒီယို ပြောင်းမည်</button>
+                <div class="my-2 border-t pt-2">
+                    <input id="dateInput" type="text" placeholder="နေ့စွဲ (ဥပမာ- ၁၂.၅.၂၀၂၆)" class="w-full p-2.5 rounded-xl border mb-2">
+                    <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2.5 rounded-xl border mb-2">
+                    <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2.5 rounded-xl border mb-2">
+                    <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-bold">ပွဲစဉ် တင်မည်</button>
+                </div>
+                <button onclick="location.reload()" class="w-full text-slate-400 py-2 text-xs border border-slate-200 rounded-xl">Admin မှ ထွက်မည်</button>
             </div>
         </section>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, doc, updateDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBbRZLUYHeVThoCscb2ul_JURGsfBjCF4s",
@@ -90,59 +92,84 @@
             setTimeout(() => t.classList.add('hidden'), 3000);
         };
 
-        window.addEvent = async () => {
-            const date = document.getElementById('dateInput').value;
-            const location = document.getElementById('locInput').value;
-            const troupe = document.getElementById('troupeInput').value;
-            if (!date || !location || !troupe) { notify("အချက်အလက်အားလုံးဖြည့်ပါ။"); return; }
-            try {
-                await addDoc(collection(db, "events"), { date, location, troupe, completed: false, createdAt: serverTimestamp() });
-                notify("အောင်မြင်စွာ တင်ပြီးပါပြီ။");
-                document.getElementById('dateInput').value = '';
-                document.getElementById('locInput').value = '';
-                document.getElementById('troupeInput').value = '';
-            } catch (e) { notify("Error: " + e.message); }
-        };
-
-        window.markCompleted = async (id) => {
-            try {
-                await updateDoc(doc(db, "events", id), { completed: true });
-                notify("ပွဲပြီးဆုံးကြောင်း အမှတ်အသားပြုပြီးပါပြီ။");
-            } catch (e) { notify("Error: " + e.message); }
-        };
-
         window.checkAdmin = () => {
             if (document.getElementById('adminPass').value === "1234") {
                 isAdmin = true;
                 document.getElementById('login-form').classList.add('hidden');
                 document.getElementById('admin-controls').classList.remove('hidden');
-                renderEvents(window.allEvents);
+                renderEvents(window.currentEvents || []);
+                notify("Admin အဖြစ် ဝင်ရောက်သွားပါသည်။");
             } else notify("စကားဝှက်မှားနေပါသည်။");
         };
 
+        window.addEvent = async () => {
+            const date = document.getElementById('dateInput').value;
+            const location = document.getElementById('locInput').value;
+            const troupe = document.getElementById('troupeInput').value;
+            if (!date || !location || !troupe) { notify("အချက်အလက်အားလုံးဖြည့်ပါ။"); return; }
+            await addDoc(collection(db, "events"), { date, location, troupe, completed: false });
+            notify("ပွဲစဉ် တင်ပြီးပါပြီ။");
+        };
+
+        window.updateVideo = async () => {
+            const link = document.getElementById('videoLink').value;
+            if(!link) return;
+            await setDoc(doc(db, "settings", "video"), { url: link });
+            notify("ဗီဒီယို ပြောင်းလဲပြီးပါပြီ။");
+        };
+
+        window.markCompleted = async (id) => {
+            await updateDoc(doc(db, "events", id), { completed: true });
+            notify("ပွဲပြီးဆုံးကြောင်း အမှတ်အသားပြုပြီးပါပြီ။");
+        };
+
+        window.deleteEvent = async (id) => {
+            await deleteDoc(doc(db, "events", id));
+            notify("ပွဲစဉ် ဖျက်ပြီးပါပြီ။");
+        };
+
         function renderEvents(events) {
+            window.currentEvents = events;
             const container = document.getElementById('schedule-body');
             container.innerHTML = '';
-            // Sort: completed false first, then by createdAt
             const sorted = events.sort((a, b) => a.completed - b.completed);
             
+            if(sorted.length === 0) {
+                container.innerHTML = '<tr><td colspan="4" class="text-slate-400 text-center py-4">ပွဲစဉ်များ မရှိသေးပါ။</td></tr>';
+                return;
+            }
+
             sorted.forEach((e) => {
+                const isDone = e.completed;
                 container.innerHTML += `
-                    <tr class="${e.completed ? 'opacity-50 bg-slate-50' : ''}">
+                    <tr class="${isDone ? 'opacity-50 bg-slate-50' : ''}">
                         <td class="px-2 py-3 font-medium">${e.date}</td>
                         <td class="px-2 py-3">${e.location}</td>
-                        <td class="px-2 py-3 text-indigo-700">${e.troupe}</td>
-                        <td class="px-2 py-3 text-center">
-                            ${!e.completed ? (isAdmin ? `<button onclick="markCompleted('${e.id}')" class="bg-red-500 text-white text-[10px] px-2 py-1 rounded">ပြီးဆုံး</button>` : `<span class="text-emerald-600 text-[10px]">ပွဲရှိ</span>`) : `<span class="text-slate-400 text-[10px]">ပြီး</span>`}
+                        <td class="px-2 py-3">${e.troupe}</td>
+                        <td class="px-2 py-3 text-center space-y-1">
+                            ${isAdmin ? (
+                                isDone ? `
+                                    <button onclick="deleteEvent('${e.id}')" class="block w-full bg-red-500 text-white text-[10px] px-1 py-1 rounded">ဖျက်</button>
+                                ` : `
+                                    <button onclick="markCompleted('${e.id}')" class="block w-full bg-emerald-600 text-white text-[10px] px-1 py-1 rounded">ပြီးဆုံး</button>
+                                    <button onclick="deleteEvent('${e.id}')" class="block w-full bg-red-500 text-white text-[10px] px-1 py-1 rounded">ဖျက်</button>
+                                `
+                            ) : (
+                                isDone ? `<span class="text-slate-400 text-[10px]">ပြီး</span>` : `<span class="text-emerald-600 font-bold text-[10px]">ပွဲရှိ</span>`
+                            )}
                         </td>
                     </tr>`;
             });
         }
 
-        onSnapshot(query(collection(db, "events"), orderBy("createdAt", "desc")), (snapshot) => {
-            window.allEvents = [];
-            snapshot.forEach(d => window.allEvents.push({ id: d.id, ...d.data() }));
-            renderEvents(window.allEvents);
+        onSnapshot(query(collection(db, "events")), (s) => {
+            const allEvents = [];
+            s.forEach(d => allEvents.push({ id: d.id, ...d.data() }));
+            renderEvents(allEvents);
+        });
+
+        onSnapshot(doc(db, "settings", "video"), (d) => {
+            if(d.exists()) document.getElementById('video-frame').src = d.data().url;
         });
     </script>
 </body>
