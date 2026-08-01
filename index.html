@@ -119,8 +119,8 @@
                     <td class="p-2 text-center">${e.phone ? `<a href="tel:${e.phone}" class="text-indigo-600">📞</a>` : '-'}</td>
                     <td class="p-2 text-center">
                         ${isAdmin ? `
-                            <button onclick="markCompleted('${e.id}')" class="text-emerald-600">✔️</button>
-                            <button onclick="deleteEvent('${e.id}')" class="text-rose-600 ml-2">❌</button>
+                            ${!e.completed ? `<button onclick="markCompleted('${e.id}')" class="text-emerald-600">✔️</button>` : ''}
+                            ${e.completed ? `<button onclick="deleteEvent('${e.id}')" class="text-rose-600 ml-2">❌</button>` : ''}
                         ` : (e.completed ? '✅' : '🔥')}
                     </td>
                 </tr>
