@@ -48,10 +48,10 @@
                     <button onclick="checkAdmin()" class="w-full bg-indigo-900 text-white py-2 rounded-xl text-xs font-bold mb-4">ဝင်မည်</button>
                     
                     <div class="space-y-3">
-                        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 text-center">
+                        <div class="bg-indigo-100 border border-indigo-200 rounded-xl p-3 text-center shadow-sm">
                             <p class="text-[11px] font-bold text-indigo-900">ဇာတ်ဆရာ ဦးအောင်ကျော်ထွန်း</p>
                         </div>
-                        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-center">
+                        <div class="bg-emerald-100 border border-emerald-200 rounded-xl p-3 text-center shadow-sm">
                             <p class="text-[11px] font-bold text-emerald-900">ဇာတ်မင်းသား အပြုံးမင်းသားလေးစမ်းရေမိုး</p>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const db = getFirestore(initializeApp({ apiKey: "AIzaSyBbRZLUYHeVThoCscb2ul_JURGsfBjCF4s", projectId: "birthday-62720" }));
         let isAdmin = false, currentTab = 'active', allEvents = [];
@@ -88,15 +88,13 @@
                 b.classList.remove('bg-indigo-900', 'text-white');
                 b.classList.add('bg-slate-200');
             });
-            const activeBtn = document.getElementById(`tab-${tab}`);
-            activeBtn.classList.replace('bg-slate-200', 'bg-indigo-900');
-            activeBtn.classList.add('text-white');
+            document.getElementById(`tab-${tab}`).classList.add('bg-indigo-900', 'text-white');
             document.getElementById('data-view').classList.toggle('hidden', currentTab === 'admin');
             document.getElementById('admin-view').classList.toggle('hidden', currentTab !== 'admin');
             renderEvents();
         };
 
-        window.checkAdmin = () => { if (document.getElementById('adminPass').value === "1234") { isAdmin = true; document.getElementById('login-form').classList.add('hidden'); document.getElementById('admin-controls').classList.remove('hidden'); } };
+        window.checkAdmin = () => { if (document.getElementById('adminPass').value === "1234") { isAdmin = true; document.getElementById('login-form').classList.add('hidden'); document.getElementById('admin-controls').classList.remove('hidden'); renderEvents(); } };
 
         window.addEvent = async () => {
             const rawDate = document.getElementById('dateInput').value;
@@ -104,6 +102,9 @@
             const p = rawDate.split('-');
             await addDoc(collection(db, "events"), { date: `${parseInt(p[2])}/${parseInt(p[1])}/${p[0]}`, rawDate, location: document.getElementById('locInput').value, troupe: document.getElementById('troupeInput').value, phone: document.getElementById('phoneInput').value, completed: false });
         };
+
+        window.markCompleted = async (id) => await updateDoc(doc(db, "events", id), { completed: true });
+        window.deleteEvent = async (id) => { if(confirm("သေချာပါသလား?")) await deleteDoc(doc(db, "events", id)); };
 
         window.renderEvents = () => {
             const container = document.getElementById('schedule-body');
@@ -115,8 +116,13 @@
                     <td class="p-2 font-bold text-indigo-900">${e.date}</td>
                     <td class="p-2">${e.location}</td>
                     <td class="p-2">${e.troupe}</td>
-                    <td class="p-2 text-center">${e.phone ? `<a href="tel:${e.phone}" class="text-indigo-600 text-base">📞</a>` : '-'}</td>
-                    <td class="p-2 text-center">${isAdmin ? `<button onclick="updateDoc(doc(db,'events','${e.id}'),{completed:true})" class="text-xs text-emerald-600">✔️</button>` : (e.completed ? '✅' : '🔥')}</td>
+                    <td class="p-2 text-center">${e.phone ? `<a href="tel:${e.phone}" class="text-indigo-600">📞</a>` : '-'}</td>
+                    <td class="p-2 text-center">
+                        ${isAdmin ? `
+                            <button onclick="markCompleted('${e.id}')" class="text-emerald-600">✔️</button>
+                            <button onclick="deleteEvent('${e.id}')" class="text-rose-600 ml-2">❌</button>
+                        ` : (e.completed ? '✅' : '🔥')}
+                    </td>
                 </tr>
             `).join('') : '<tr><td colspan="5" class="text-center p-4">ပွဲစဉ်မရှိပါ။</td></tr>';
         };
