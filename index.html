@@ -7,53 +7,51 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <style>
-        .swiper { width: 100%; height: 300px; border-radius: 1rem; }
+        @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
+        body { font-family: 'Pyidaungsu', sans-serif; }
+        .swiper { width: 100%; height: 350px; border-radius: 1.5rem; }
         .swiper-slide img { width: 100%; height: 100%; object-fit: cover; }
-        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-slate-50 text-slate-800">
 
-    <div id="toast" class="fixed top-5 right-5 z-50 hidden bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-2xl">
+    <div id="toast" class="fixed top-5 right-5 z-50 hidden bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-xl transition-all">
         <span id="toast-msg"></span>
     </div>
 
-    <header class="bg-gradient-to-r from-indigo-900 to-indigo-700 text-white py-10 px-4 text-center">
-        <h1 class="text-4xl font-extrabold mb-2">စမ်းရေမိုး</h1>
-        <p class="text-indigo-200 text-lg">၂၀၂၆-၂၀၂၇ ဇာတ်ပွဲများ အချိန်ဇယား</p>
+    <header class="bg-indigo-900 text-white py-12 px-4 text-center shadow-lg">
+        <h1 class="text-4xl font-bold mb-2">စမ်းရေမိုး</h1>
+        <p class="text-indigo-200">၂၀၂၆-၂၀၂၇ ဇာတ်ပွဲများ အချိန်ဇယား</p>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 py-8">
-        <div class="swiper mySwiper mb-10 shadow-xl">
+    <main class="max-w-3xl mx-auto px-4 py-8">
+        <div class="swiper mySwiper mb-8 shadow-2xl">
             <div class="swiper-wrapper" id="swiper-wrapper">
-                <div class="swiper-slide"><img src="https://placehold.co/1200x400/4f46e5/ffffff?text=စမ်းရေမိုး+ဇာတ်ပွဲများ" alt="Banner"></div>
+                <div class="swiper-slide"><img src="https://placehold.co/800x400/4f46e5/ffffff?text=စမ်းရေမိုး+ဇာတ်ပွဲများ" alt="Banner"></div>
             </div>
         </div>
 
-        <section class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-2xl font-bold mb-6 text-indigo-900 flex items-center">
-                <span class="mr-2">📅</span> လာမည့် ပွဲစဉ်များ
-            </h2>
+        <section class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 mb-12">
+            <h2 class="text-2xl font-bold mb-6 text-indigo-900 flex items-center">📅 လာမည့် ပွဲစဉ်များ</h2>
             <div id="schedule-body" class="space-y-4">
-                <p class="text-gray-400">Loading...</p>
+                <p class="text-slate-400 text-center">Data များတင်နေသည်...</p>
             </div>
         </section>
 
-        <section class="mt-16 border-t pt-10">
-            <div id="login-form" class="max-w-sm mx-auto bg-white p-8 rounded-3xl shadow-lg border border-indigo-100">
-                <h3 class="text-center font-bold text-gray-700 mb-4">Admin အကောင့်ဝင်ရန်</h3>
-                <input id="adminPass" type="password" placeholder="စကားဝှက်" class="w-full p-3 mb-4 rounded-xl border border-gray-200">
-                <button onclick="checkAdmin()" class="w-full bg-indigo-900 text-white py-3 rounded-xl font-bold hover:bg-indigo-800 transition">ဝင်မည်</button>
+        <section class="mt-8">
+            <div id="login-form" class="max-w-md mx-auto bg-white p-8 rounded-3xl shadow-lg border border-indigo-100">
+                <h3 class="font-bold text-slate-700 mb-4 text-center">Admin အကောင့်ဝင်ရန်</h3>
+                <input id="adminPass" type="password" placeholder="စကားဝှက်" class="w-full p-4 mb-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                <button onclick="checkAdmin()" class="w-full bg-indigo-900 text-white py-4 rounded-xl font-bold hover:bg-indigo-800 transition">ဝင်မည်</button>
             </div>
             
-            <div id="admin-controls" class="hidden bg-white p-8 rounded-3xl shadow-xl space-y-8">
-                <h3 class="text-2xl font-bold text-indigo-900">Admin Control Panel</h3>
-                <div class="grid grid-cols-1 gap-4">
-                    <input id="dateInput" type="text" placeholder="နေ့စွဲ (ဥပမာ - ၁-၁၁-၂၀၂၆)" class="p-4 rounded-xl border">
-                    <input id="locInput" type="text" placeholder="နေရာ" class="p-4 rounded-xl border">
-                    <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="p-4 rounded-xl border">
-                    <button onclick="addEvent()" class="bg-emerald-600 text-white py-4 rounded-xl font-bold hover:bg-emerald-700">ပွဲစဉ် တင်မည်</button>
-                </div>
+            <div id="admin-controls" class="hidden bg-white p-8 rounded-3xl shadow-xl space-y-4 border border-indigo-100">
+                <h3 class="text-xl font-bold text-indigo-900 mb-4">Admin Control Panel</h3>
+                <input id="dateInput" type="text" placeholder="နေ့စွဲ (ဥပမာ - ၁-၁၁-၂၀၂၆)" class="w-full p-4 rounded-xl border">
+                <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-4 rounded-xl border">
+                <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-4 rounded-xl border">
+                <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold hover:bg-emerald-700 transition">ပွဲစဉ် တင်မည်</button>
+                <button onclick="location.reload()" class="w-full text-slate-400 py-2 hover:text-slate-600">ထွက်မည်</button>
             </div>
         </section>
     </main>
@@ -62,7 +60,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // IMPORTANT: Replace this with your actual config
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -87,26 +84,15 @@
             const location = document.getElementById('locInput').value;
             const troupe = document.getElementById('troupeInput').value;
 
-            if (!date || !location || !troupe) {
-                notify("အချက်အလက်အားလုံးဖြည့်ပေးပါ။");
-                return;
-            }
+            if (!date || !location || !troupe) { notify("အချက်အလက်အားလုံးဖြည့်ပါ။"); return; }
 
             try {
-                await addDoc(collection(db, "events"), {
-                    date,
-                    location,
-                    troupe,
-                    timestamp: serverTimestamp()
-                });
+                await addDoc(collection(db, "events"), { date, location, troupe, timestamp: serverTimestamp() });
                 notify("အောင်မြင်စွာ တင်ပြီးပါပြီ။");
                 document.getElementById('dateInput').value = '';
                 document.getElementById('locInput').value = '';
                 document.getElementById('troupeInput').value = '';
-            } catch (e) {
-                console.error(e);
-                notify("အမှားအယွင်းရှိပါသည်။");
-            }
+            } catch (e) { notify("အမှားအယွင်းရှိပါသည်။"); }
         };
 
         window.checkAdmin = () => {
@@ -120,19 +106,19 @@
             const container = document.getElementById('schedule-body');
             container.innerHTML = '';
             snapshot.forEach((doc) => {
-                const event = doc.data();
+                const e = doc.data();
                 container.innerHTML += `
-                    <div class="flex items-center p-4 border-b border-gray-50 hover:bg-gray-50 transition rounded-xl">
-                        <div class="bg-indigo-100 text-indigo-900 font-bold px-4 py-2 rounded-lg mr-4 text-sm">${event.date}</div>
+                    <div class="flex items-center p-4 border border-slate-50 bg-slate-50 rounded-2xl">
+                        <div class="bg-indigo-900 text-white font-bold px-4 py-2 rounded-xl mr-4 text-xs">${e.date}</div>
                         <div>
-                            <div class="font-bold text-gray-800">${event.location}</div>
-                            <div class="text-sm text-indigo-600">${event.troupe}</div>
+                            <div class="font-bold text-slate-800">${e.location}</div>
+                            <div class="text-sm text-indigo-700">${e.troupe}</div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
         });
     </script>
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>new Swiper(".mySwiper", { loop: true, autoplay: { delay: 3000 } });</script>
 </body>
 </html>
