@@ -35,7 +35,7 @@
                 <span class="mr-2">📅</span> လာမည့် ပွဲစဉ်များ
             </h2>
             <div id="schedule-body" class="space-y-4">
-                <!-- Data will be loaded here -->
+                <p class="text-gray-400">Loading...</p>
             </div>
         </section>
 
@@ -60,12 +60,13 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // IMPORTANT: Replace this with your actual config
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "YOUR_PROJECT.firebaseapp.com",
-            projectId: "YOUR_PROJECT",
+            projectId: "YOUR_PROJECT_ID",
             storageBucket: "YOUR_PROJECT.appspot.com",
             messagingSenderId: "YOUR_ID",
             appId: "YOUR_APP_ID"
@@ -75,10 +76,37 @@
         const db = getFirestore(app);
 
         window.notify = (msg) => {
-            const toast = document.getElementById('toast');
+            const t = document.getElementById('toast');
             document.getElementById('toast-msg').innerText = msg;
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 3000);
+        };
+
+        window.addEvent = async () => {
+            const date = document.getElementById('dateInput').value;
+            const location = document.getElementById('locInput').value;
+            const troupe = document.getElementById('troupeInput').value;
+
+            if (!date || !location || !troupe) {
+                notify("အချက်အလက်အားလုံးဖြည့်ပေးပါ။");
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "events"), {
+                    date,
+                    location,
+                    troupe,
+                    timestamp: serverTimestamp()
+                });
+                notify("အောင်မြင်စွာ တင်ပြီးပါပြီ။");
+                document.getElementById('dateInput').value = '';
+                document.getElementById('locInput').value = '';
+                document.getElementById('troupeInput').value = '';
+            } catch (e) {
+                console.error(e);
+                notify("အမှားအယွင်းရှိပါသည်။");
+            }
         };
 
         window.checkAdmin = () => {
