@@ -12,38 +12,40 @@
 </head>
 <body class="bg-slate-50 flex flex-col h-screen">
 
-    <!-- Header -->
     <header class="bg-indigo-900 text-white py-3 px-4 text-center shadow-md flex-shrink-0">
         <h1 class="text-sm font-bold">စမ်းရေမိုး</h1>
         <p class="text-indigo-200 text-[9px]">ဇာတ်ပွဲများ အချိန်ဇယား</p>
     </header>
 
-    <!-- Scrollable Main Content -->
     <main class="flex-1 overflow-y-auto p-4 pb-24">
         <div class="max-w-md mx-auto space-y-4">
             <!-- Video Section -->
             <section>
                 <div class="aspect-video w-full rounded-xl overflow-hidden shadow-sm bg-slate-900">
-                    <iframe id="video-frame" class="w-full h-full" 
-                            src="https://www.youtube.com/embed/v55HWADK2MU?modestbranding=1&rel=0&controls=1&showinfo=0&iv_load_policy=3" 
-                            frameborder="0" allowfullscreen></iframe>
+                    <iframe id="video-frame" class="w-full h-full" src="" frameborder="0" allowfullscreen></iframe>
                 </div>
             </section>
 
             <!-- Table Section -->
             <section class="bg-white rounded-xl shadow-sm border border-slate-100 p-3">
                 <div id="data-view">
-                    <table class="w-full text-[11px] text-left">
-                        <thead class="text-slate-400 uppercase text-[9px]">
-                            <tr>
-                                <th class="px-1 py-2">ရက်စွဲ</th>
-                                <th class="px-1 py-2">နေရာ</th>
-                                <th class="px-1 py-2">ဇာတ်</th>
-                                <th class="px-1 py-2 text-center">လုပ်ဆောင်ချက်</th>
-                            </tr>
-                        </thead>
-                        <tbody id="schedule-body" class="divide-y divide-slate-100"></tbody>
-                    </table>
+                    <!-- Search Input -->
+                    <input type="text" id="searchInput" placeholder="ရက်စွဲ (သို့) နေရာဖြင့် ရှာရန်..." 
+                           oninput="renderEvents()" class="w-full p-2 mb-3 text-xs rounded-lg border border-slate-200 focus:outline-none">
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-[11px] text-left">
+                            <thead class="text-slate-400 uppercase text-[9px]">
+                                <tr>
+                                    <th class="px-1 py-2">ရက်စွဲ</th>
+                                    <th class="px-1 py-2">နေရာ</th>
+                                    <th class="px-1 py-2">ဇာတ်</th>
+                                    <th class="px-1 py-2 text-center">လုပ်ဆောင်ချက်</th>
+                                </tr>
+                            </thead>
+                            <tbody id="schedule-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div id="admin-view" class="hidden space-y-3">
@@ -65,7 +67,6 @@
         </div>
     </main>
 
-    <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 w-full bg-white border-t p-2 shadow-2xl z-50">
         <div class="flex gap-2 max-w-md mx-auto">
             <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-2 text-[10px] font-bold rounded-lg bg-indigo-900 text-white">လာမည့်ပွဲ</button>
@@ -115,15 +116,8 @@
             const date = document.getElementById('dateInput').value;
             const location = document.getElementById('locInput').value;
             const troupe = document.getElementById('troupeInput').value;
-            
             if (!date || !location || !troupe) return;
-
-            // Check if date exists
-            if (allEvents.some(e => e.date === date)) {
-                alert("ဒီနေ့အတွက် ပွဲစဉ် ရှိနှင့်ပြီးသား ဖြစ်ပါတယ်");
-                return;
-            }
-
+            if (allEvents.some(e => e.date === date)) { alert("ဒီနေ့အတွက် ပွဲစဉ် ရှိနှင့်ပြီးသား ဖြစ်ပါတယ်"); return; }
             await addDoc(collection(db, "events"), { date, location, troupe, completed: false, timestamp: new Date().getTime() });
         };
 
@@ -135,11 +129,15 @@
         window.markCompleted = async (id) => await updateDoc(doc(db, "events", id), { completed: true });
         window.deleteEvent = async (id) => await deleteDoc(doc(db, "events", id));
 
-        function renderEvents() {
+        window.renderEvents = () => {
             const container = document.getElementById('schedule-body');
-            const filtered = allEvents.filter(e => currentTab === 'active' ? !e.completed : e.completed);
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = allEvents.filter(e => currentTab === 'active' ? !e.completed : e.completed);
             
-            // Sort by date: DD/MM/YYYY
+            if (search) {
+                filtered = filtered.filter(e => e.date.toLowerCase().includes(search) || e.location.toLowerCase().includes(search));
+            }
+            
             const sorted = filtered.sort((a, b) => {
                 const pA = a.date.split('/'); const pB = b.date.split('/');
                 return new Date(pA[2], pA[1]-1, pA[0]) - new Date(pB[2], pB[1]-1, pB[0]);
