@@ -10,53 +10,65 @@
         body { font-family: 'Pyidaungsu', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen pb-10">
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-20">
 
     <div id="toast" class="fixed top-5 left-5 right-5 z-50 hidden bg-indigo-900 text-white px-6 py-3 rounded-xl shadow-lg text-center">
         <span id="toast-msg"></span>
     </div>
 
-    <header class="bg-indigo-900 text-white py-8 px-4 text-center shadow-lg">
-        <h1 class="text-3xl font-bold">စမ်းရေမိုး</h1>
-        <p class="text-indigo-200 mt-1">ဇာတ်ပွဲများ အချိန်ဇယား</p>
+    <header class="bg-indigo-900 text-white py-6 px-4 text-center shadow-lg">
+        <h1 class="text-2xl font-bold">စမ်းရေမိုး</h1>
+        <p class="text-indigo-200 text-sm">ဇာတ်ပွဲများ အချိန်ဇယား</p>
     </header>
 
     <main class="max-w-md mx-auto px-4 py-6">
-        <!-- YouTube Embed Section -->
-        <section class="mb-8">
-            <div class="aspect-video w-full rounded-3xl overflow-hidden shadow-lg bg-slate-200">
+        <section class="mb-6">
+            <div class="aspect-video w-full rounded-2xl overflow-hidden shadow-md bg-slate-900">
                 <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </section>
 
-        <section class="bg-white rounded-3xl shadow-sm border border-slate-100 p-5 mb-8">
-            <h2 class="text-xl font-bold mb-4 text-indigo-900">📅 လာမည့် ပွဲစဉ်များ</h2>
-            <div id="schedule-body" class="space-y-4">
-                <p class="text-slate-400 text-center py-4">Data များတင်နေသည်...</p>
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-6">
+            <h2 class="text-lg font-bold mb-4 text-indigo-900 text-center">📅 ပွဲစဉ်ဇယား</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="text-xs text-slate-500 uppercase bg-slate-50">
+                        <tr>
+                            <th class="px-2 py-3">နေ့စွဲ</th>
+                            <th class="px-2 py-3">နေရာ</th>
+                            <th class="px-2 py-3">ဇာတ်အဖွဲ့</th>
+                            <th class="px-2 py-3 text-center">အခြေအနေ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="schedule-body" class="divide-y divide-slate-100">
+                        <tr>
+                            <td colspan="4" class="text-slate-400 text-center py-4">Data များတင်နေသည်...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </section>
 
-        <section class="mt-8 mb-12">
-            <div id="login-form" class="bg-white p-6 rounded-3xl shadow-lg border border-indigo-100">
-                <h3 class="font-bold text-slate-700 mb-4 text-center">Admin အတွက်</h3>
-                <input id="adminPass" type="password" placeholder="စကားဝှက်" class="w-full p-4 mb-4 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500">
-                <button onclick="checkAdmin()" class="w-full bg-indigo-900 text-white py-3 rounded-xl font-bold active:scale-95 transition">ဝင်မည်</button>
+        <section id="admin-section" class="mt-8">
+            <div id="login-form" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100">
+                <input id="adminPass" type="password" placeholder="Admin စကားဝှက်" class="w-full p-3 mb-3 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500">
+                <button onclick="checkAdmin()" class="w-full bg-indigo-900 text-white py-2.5 rounded-xl font-bold">Admin ဝင်မည်</button>
             </div>
             
-            <div id="admin-controls" class="hidden bg-white p-6 rounded-3xl shadow-xl space-y-4 border border-indigo-100">
-                <h3 class="text-xl font-bold text-indigo-900 mb-2">Admin Control</h3>
-                <input id="dateInput" type="text" placeholder="နေ့စွဲ (ဥပမာ - ၁-၁၁-၂၀၂၆)" class="w-full p-3 rounded-xl border">
-                <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-3 rounded-xl border">
-                <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-3 rounded-xl border">
-                <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold active:scale-95 transition">ပွဲစဉ် တင်မည်</button>
-                <button onclick="location.reload()" class="w-full text-slate-400 py-2 text-sm">Admin မှ ထွက်မည်</button>
+            <div id="admin-controls" class="hidden bg-white p-5 rounded-2xl shadow-sm border border-indigo-100 space-y-3">
+                <h3 class="font-bold text-indigo-900">Admin Control</h3>
+                <input id="dateInput" type="text" placeholder="နေ့စွဲ (ဥပမာ - ၁-၁၁-၂၀၂၆)" class="w-full p-2.5 rounded-xl border">
+                <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2.5 rounded-xl border">
+                <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2.5 rounded-xl border">
+                <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-bold">ပွဲစဉ် တင်မည်</button>
+                <button onclick="location.reload()" class="w-full text-slate-400 py-2 text-xs">Admin မှ ထွက်မည်</button>
             </div>
         </section>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBbRZLUYHeVThoCscb2ul_JURGsfBjCF4s",
@@ -69,6 +81,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        let isAdmin = false;
 
         window.notify = (msg) => {
             const t = document.getElementById('toast');
@@ -81,51 +94,55 @@
             const date = document.getElementById('dateInput').value;
             const location = document.getElementById('locInput').value;
             const troupe = document.getElementById('troupeInput').value;
-
             if (!date || !location || !troupe) { notify("အချက်အလက်အားလုံးဖြည့်ပါ။"); return; }
-
             try {
-                await addDoc(collection(db, "events"), { 
-                    date, 
-                    location, 
-                    troupe, 
-                    createdAt: serverTimestamp() 
-                });
+                await addDoc(collection(db, "events"), { date, location, troupe, completed: false, createdAt: serverTimestamp() });
                 notify("အောင်မြင်စွာ တင်ပြီးပါပြီ။");
                 document.getElementById('dateInput').value = '';
                 document.getElementById('locInput').value = '';
                 document.getElementById('troupeInput').value = '';
-            } catch (e) { 
-                console.error("Firebase Error:", e);
-                notify("အမှားအယွင်းရှိပါသည်။ Console ကြည့်ပါ။"); 
-            }
+            } catch (e) { notify("Error: " + e.message); }
+        };
+
+        window.markCompleted = async (id) => {
+            try {
+                await updateDoc(doc(db, "events", id), { completed: true });
+                notify("ပွဲပြီးဆုံးကြောင်း အမှတ်အသားပြုပြီးပါပြီ။");
+            } catch (e) { notify("Error: " + e.message); }
         };
 
         window.checkAdmin = () => {
             if (document.getElementById('adminPass').value === "1234") {
+                isAdmin = true;
                 document.getElementById('login-form').classList.add('hidden');
                 document.getElementById('admin-controls').classList.remove('hidden');
+                renderEvents(window.allEvents);
             } else notify("စကားဝှက်မှားနေပါသည်။");
         };
 
-        onSnapshot(query(collection(db, "events"), orderBy("createdAt", "desc")), (snapshot) => {
+        function renderEvents(events) {
             const container = document.getElementById('schedule-body');
             container.innerHTML = '';
-            if (snapshot.empty) {
-                container.innerHTML = '<p class="text-slate-400 text-center py-4">ပွဲစဉ်များ မရှိသေးပါ။</p>';
-                return;
-            }
-            snapshot.forEach((doc) => {
-                const e = doc.data();
+            // Sort: completed false first, then by createdAt
+            const sorted = events.sort((a, b) => a.completed - b.completed);
+            
+            sorted.forEach((e) => {
                 container.innerHTML += `
-                    <div class="flex items-center p-3 border-b border-slate-100">
-                        <div class="bg-indigo-100 text-indigo-900 font-bold px-3 py-1 rounded-lg mr-3 text-xs whitespace-nowrap">${e.date}</div>
-                        <div>
-                            <div class="font-bold text-slate-800 text-sm">${e.location}</div>
-                            <div class="text-xs text-indigo-600">${e.troupe}</div>
-                        </div>
-                    </div>`;
+                    <tr class="${e.completed ? 'opacity-50 bg-slate-50' : ''}">
+                        <td class="px-2 py-3 font-medium">${e.date}</td>
+                        <td class="px-2 py-3">${e.location}</td>
+                        <td class="px-2 py-3 text-indigo-700">${e.troupe}</td>
+                        <td class="px-2 py-3 text-center">
+                            ${!e.completed ? (isAdmin ? `<button onclick="markCompleted('${e.id}')" class="bg-red-500 text-white text-[10px] px-2 py-1 rounded">ပြီးဆုံး</button>` : `<span class="text-emerald-600 text-[10px]">ပွဲရှိ</span>`) : `<span class="text-slate-400 text-[10px]">ပြီး</span>`}
+                        </td>
+                    </tr>`;
             });
+        }
+
+        onSnapshot(query(collection(db, "events"), orderBy("createdAt", "desc")), (snapshot) => {
+            window.allEvents = [];
+            snapshot.forEach(d => window.allEvents.push({ id: d.id, ...d.data() }));
+            renderEvents(window.allEvents);
         });
     </script>
 </body>
