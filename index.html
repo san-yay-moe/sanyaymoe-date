@@ -37,7 +37,7 @@
                                 <th class="px-3 py-2.5 whitespace-nowrap">ရက်စွဲ</th>
                                 <th class="px-3 py-2.5">နေရာ</th>
                                 <th class="px-3 py-2.5">ဇာတ်</th>
-                                <th class="px-3 py-2.5 text-center">ဆက်သွယ်ရန်</th>
+                                <th class="px-3 py-2.5 text-center">ဖုန်း</th>
                                 <th class="px-3 py-2.5 text-center">အခြေအနေ</th>
                             </tr>
                         </thead>
@@ -55,7 +55,7 @@
                     <input id="dateInput" type="date" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50">
                     <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50">
                     <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50">
-                    <input id="phoneInput" type="text" placeholder="ဆက်သွယ်ရန် ဖုန်းနံပါတ်" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50">
+                    <input id="phoneInput" type="text" placeholder="ဖုန်းနံပါတ်" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50">
                     <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-3 rounded-xl text-xs font-bold">ပွဲစဉ် ထည့်မည်</button>
                 </div>
             </div>
@@ -79,6 +79,12 @@
 
         window.switchTab = (tab) => {
             currentTab = tab;
+            document.querySelectorAll('nav button').forEach(b => b.classList.replace('bg-indigo-900', 'bg-slate-100'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.replace('text-white', 'text-slate-600'));
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            activeBtn.classList.replace('bg-slate-100', 'bg-indigo-900');
+            activeBtn.classList.replace('text-slate-600', 'text-white');
+            
             document.getElementById('data-view').classList.toggle('hidden', currentTab === 'admin');
             document.getElementById('admin-view').classList.toggle('hidden', currentTab !== 'admin');
             renderEvents();
@@ -108,28 +114,21 @@
             alert("ထည့်သွင်းပြီးပါပြီ");
         };
 
-        window.markCompleted = async (id) => await updateDoc(doc(db, "events", id), { completed: true });
-        window.deleteEvent = async (id) => await deleteDoc(doc(db, "events", id));
-
         window.renderEvents = () => {
             const container = document.getElementById('schedule-body');
-            const search = document.getElementById('searchInput').value.toLowerCase();
-            let filtered = allEvents.filter(e => currentTab === 'active' ? !e.completed : e.completed);
-            
-            if (search) filtered = filtered.filter(e => e.date.includes(search) || e.location.toLowerCase().includes(search));
-            
-            const sorted = filtered.sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
+            const filtered = allEvents.filter(e => currentTab === 'active' ? !e.completed : e.completed)
+                                    .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
 
-            container.innerHTML = sorted.length ? sorted.map(e => `
+            container.innerHTML = filtered.length ? filtered.map(e => `
                 <tr class="border-b">
                     <td class="px-3 py-3 text-indigo-950 font-bold">${e.date}</td>
                     <td class="px-3 py-3 text-slate-800">${e.location}</td>
                     <td class="px-3 py-3 text-slate-600">${e.troupe}</td>
                     <td class="px-3 py-3 text-center">
-                        ${e.phone ? `<a href="tel:${e.phone}" class="text-indigo-600 font-bold underline text-[10px]">${e.phone}</a>` : '-'}
+                        ${e.phone ? `<a href="tel:${e.phone}" class="text-indigo-600 font-bold underline">${e.phone}</a>` : '-'}
                     </td>
                     <td class="px-3 py-3 text-center">
-                        ${isAdmin ? `<button onclick="markCompleted('${e.id}')" class="text-green-600 p-1">✔️</button><button onclick="deleteEvent('${e.id}')" class="text-red-600 p-1">❌</button>` 
+                        ${isAdmin ? `<button onclick="updateDoc(doc(db,'events','${e.id}'),{completed:true})" class="p-1">✔️</button><button onclick="deleteDoc(doc(db,'events','${e.id}'))" class="p-1">❌</button>` 
                         : (e.completed ? '✅' : '🔥')}
                     </td>
                 </tr>
