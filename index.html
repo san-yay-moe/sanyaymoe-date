@@ -104,47 +104,42 @@
         };
 
         window.markCompleted = async (id) => await updateDoc(doc(db, "events", id), { completed: true });
-        window.deleteEvent = async (id) => { if(confirm("သေချာပါသလား?")) await deleteDoc(doc(db, "events", id)); };
+        
+        window.deleteEvent = async (id) => { 
+            if(confirm("သေချာပါသလား?")) {
+                await deleteDoc(doc(db, "events", id));
+                renderEvents();
+            }
+        };
 
         window.renderEvents = () => {
             const container = document.getElementById('schedule-body');
             const search = document.getElementById('searchInput').value.toLowerCase();
             
-            // Filter and sort events
-            const filtered = allEvents.filter(e => 
-                (currentTab === 'active' ? !e.completed : e.completed) && 
-                (e.location.toLowerCase().includes(search) || e.date.includes(search))
-            ).sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
+            const filtered = allEvents
+                .filter((e, index, self) => 
+                    (currentTab === 'active' ? !e.completed : e.completed) && 
+                    (e.location.toLowerCase().includes(search) || e.date.includes(search)) &&
+                    self.findIndex(t => t.rawDate === e.rawDate && t.location === e.location) === index
+                )
+                .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
 
-            // Group by date to avoid repeating same date rows
-            const grouped = filtered.reduce((acc, curr) => {
-                if (!acc[curr.rawDate]) acc[curr.rawDate] = [];
-                acc[curr.rawDate].push(curr);
-                return acc;
-            }, {});
-
-            let html = '';
-            for (const date in grouped) {
-                const events = grouped[date];
-                events.forEach((e, idx) => {
-                    html += `
-                        <tr class="border-b hover:bg-slate-50">
-                            <td class="p-2 font-bold text-indigo-900">${idx === 0 ? e.date : ''}</td>
-                            <td class="p-2">${e.location}</td>
-                            <td class="p-2">${e.troupe}</td>
-                            <td class="p-2 text-center">${e.phone ? `<a href="tel:${e.phone}" class="text-indigo-600">📞</a>` : '-'}</td>
-                            <td class="p-2 text-center">
-                                ${isAdmin ? `
-                                    ${!e.completed ? `<button onclick="markCompleted('${e.id}')" class="text-emerald-600">✔️</button>` : ''}
-                                    ${currentTab === 'done' ? `<button onclick="deleteEvent('${e.id}')" class="text-rose-600 ml-2">❌</button>` : ''}
-                                ` : (e.completed ? '✅' : '🔥')}
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-
-            container.innerHTML = html || '<tr><td colspan="5" class="text-center p-4">ပွဲစဉ်မရှိပါ။</td></tr>';
+            container.innerHTML = filtered.length ? filtered.map(e => `
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-2 font-bold text-indigo-900">${e.date}</td>
+                    <td class="p-2">${e.location}</td>
+                    <td class="p-2">${e.troupe}</td>
+                    <td class="p-2 text-center">
+                        ${(e.phone && currentTab === 'active') ? `<a href="tel:${e.phone}" class="text-indigo-600">📞</a>` : (e.phone ? '📞' : '-')}
+                    </td>
+                    <td class="p-2 text-center">
+                        ${isAdmin ? `
+                            ${!e.completed ? `<button onclick="markCompleted('${e.id}')" class="text-emerald-600">✔️</button>` : ''}
+                            <button onclick="deleteEvent('${e.id}')" class="text-rose-600 ml-2">❌</button>
+                        ` : (e.completed ? '✅' : '🔥')}
+                    </td>
+                </tr>
+            `).join('') : '<tr><td colspan="5" class="text-center p-4">ပွဲစဉ်မရှိပါ။</td></tr>';
         };
 
         onSnapshot(query(collection(db, "events")), (s) => {
@@ -154,3 +149,4 @@
     </script>
 </body>
 </html>
+```eof
