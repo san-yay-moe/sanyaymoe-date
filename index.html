@@ -30,10 +30,15 @@
             </div>
         </section>
 
+        <!-- Tabs -->
+        <div class="flex bg-white rounded-2xl p-1 shadow-sm mb-4 border border-slate-100">
+            <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-2 text-sm font-bold rounded-xl bg-indigo-900 text-white">လာမည့်ပွဲ</button>
+            <button onclick="switchTab('done')" id="tab-done" class="flex-1 py-2 text-sm font-bold rounded-xl text-slate-500">ပြီးဆုံးပွဲ</button>
+        </div>
+
         <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-6">
-            <h2 class="text-lg font-bold mb-4 text-indigo-900 text-center">📅 ပွဲစဉ်ဇယား</h2>
             <table class="w-full text-sm text-left">
-                <thead class="text-xs text-slate-500 uppercase bg-slate-50">
+                <thead class="text-xs text-slate-500 uppercase">
                     <tr>
                         <th class="px-2 py-3">နေ့စွဲ</th>
                         <th class="px-2 py-3">နေရာ</th>
@@ -58,12 +63,12 @@
                 <input id="videoLink" type="text" placeholder="Video ID (e.g. v55HWADK2MU)" class="w-full p-2.5 rounded-xl border">
                 <button onclick="updateVideo()" class="w-full bg-blue-600 text-white py-2 rounded-xl text-sm">ဗီဒီယို ပြောင်းမည်</button>
                 <div class="my-2 border-t pt-2">
-                    <input id="dateInput" type="text" placeholder="နေ့စွဲ (ဥပမာ: 01/08/2026)" class="w-full p-2.5 rounded-xl border mb-2">
+                    <input id="dateInput" type="text" placeholder="နေ့စွဲ (DD/MM/YYYY)" class="w-full p-2.5 rounded-xl border mb-2">
                     <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2.5 rounded-xl border mb-2">
                     <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2.5 rounded-xl border mb-2">
                     <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-2.5 rounded-xl font-bold">ပွဲစဉ် တင်မည်</button>
                 </div>
-                <button onclick="location.reload()" class="w-full text-slate-400 py-2 text-xs border border-slate-200 rounded-xl">Admin မှ ထွက်မည်</button>
+                <button onclick="location.reload()" class="w-full text-slate-400 py-2 text-xs border border-slate-200 rounded-xl">Admin ထွက်မည်</button>
             </div>
         </section>
     </main>
@@ -84,6 +89,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         let isAdmin = false;
+        let currentTab = 'active';
+        let allEvents = [];
+
+        window.switchTab = (tab) => {
+            currentTab = tab;
+            document.getElementById('tab-active').className = tab === 'active' ? 'flex-1 py-2 text-sm font-bold rounded-xl bg-indigo-900 text-white' : 'flex-1 py-2 text-sm font-bold rounded-xl text-slate-500';
+            document.getElementById('tab-done').className = tab === 'done' ? 'flex-1 py-2 text-sm font-bold rounded-xl bg-indigo-900 text-white' : 'flex-1 py-2 text-sm font-bold rounded-xl text-slate-500';
+            renderEvents();
+        };
 
         window.notify = (msg) => {
             const t = document.getElementById('toast');
@@ -97,7 +111,7 @@
                 isAdmin = true;
                 document.getElementById('login-form').classList.add('hidden');
                 document.getElementById('admin-controls').classList.remove('hidden');
-                notify("Admin ဝင်ရောက်သွားပါသည်။");
+                renderEvents();
             } else notify("စကားဝှက်မှားပါသည်။");
         };
 
@@ -118,51 +132,42 @@
             notify("ဗီဒီယို ပြောင်းလဲပြီးပါပြီ။");
         };
 
-        window.markCompleted = async (id) => {
-            await updateDoc(doc(db, "events", id), { completed: true });
-        };
+        window.markCompleted = async (id) => { await updateDoc(doc(db, "events", id), { completed: true }); };
+        window.deleteEvent = async (id) => { await deleteDoc(doc(db, "events", id)); };
 
-        window.deleteEvent = async (id) => {
-            await deleteDoc(doc(db, "events", id));
-        };
-
-        function renderEvents(events) {
+        function renderEvents() {
             const container = document.getElementById('schedule-body');
-            container.innerHTML = '';
+            const filtered = allEvents.filter(e => currentTab === 'active' ? !e.completed : e.completed);
             
-            // ရက်စွဲအလိုက် စီပေးခြင်း (DD/MM/YYYY ပုံစံဖြင့်)
-            const sorted = events.sort((a, b) => {
-                if (a.completed !== b.completed) return a.completed - b.completed;
-                const dateA = a.date.split('/').reverse().join('');
-                const dateB = b.date.split('/').reverse().join('');
-                return dateA.localeCompare(dateB);
+            const sorted = filtered.sort((a, b) => {
+                const dateA = new Date(a.date.split('/').reverse().join('-'));
+                const dateB = new Date(b.date.split('/').reverse().join('-'));
+                return dateA - dateB;
             });
             
             if(sorted.length === 0) return container.innerHTML = '<tr><td colspan="4" class="text-slate-400 text-center py-4">ပွဲစဉ်မရှိသေးပါ။</td></tr>';
 
-            sorted.forEach((e) => {
-                const isDone = e.completed;
-                container.innerHTML += `
-                    <tr class="${isDone ? 'opacity-40' : ''}">
-                        <td class="px-2 py-3">${e.date}</td>
-                        <td class="px-2 py-3">${e.location}</td>
-                        <td class="px-2 py-3">${e.troupe}</td>
-                        <td class="px-2 py-3 text-center">
-                            ${isAdmin ? `
-                                <div class="flex flex-col gap-1">
-                                    ${!isDone ? `<button onclick="markCompleted('${e.id}')" class="bg-emerald-600 text-white text-[10px] px-2 py-1 rounded">ပြီးဆုံး</button>` : ''}
-                                    <button onclick="deleteEvent('${e.id}')" class="bg-red-500 text-white text-[10px] px-2 py-1 rounded">ဖျက်</button>
-                                </div>
-                            ` : (isDone ? `<span class="text-slate-400 text-[10px]">ပြီး</span>` : `<span class="text-emerald-600 font-bold text-[10px]">ပွဲရှိ</span>`)}
-                        </td>
-                    </tr>`;
-            });
+            container.innerHTML = sorted.map(e => `
+                <tr>
+                    <td class="px-2 py-3">${e.date}</td>
+                    <td class="px-2 py-3">${e.location}</td>
+                    <td class="px-2 py-3">${e.troupe}</td>
+                    <td class="px-2 py-3 text-center">
+                        ${isAdmin ? `
+                            <div class="flex flex-col gap-1">
+                                ${!e.completed ? `<button onclick="markCompleted('${e.id}')" class="bg-emerald-600 text-white text-[10px] px-2 py-1 rounded">ပြီး</button>` : ''}
+                                <button onclick="deleteEvent('${e.id}')" class="bg-red-500 text-white text-[10px] px-2 py-1 rounded">ဖျက်</button>
+                            </div>
+                        ` : (e.completed ? `<span class="text-slate-400 text-[10px]">ပြီး</span>` : `<span class="text-emerald-600 font-bold text-[10px]">ပွဲရှိ</span>`)}
+                    </td>
+                </tr>
+            `).join('');
         }
 
         onSnapshot(query(collection(db, "events")), (s) => {
-            const allEvents = [];
+            allEvents = [];
             s.forEach(d => allEvents.push({ id: d.id, ...d.data() }));
-            renderEvents(allEvents);
+            renderEvents();
         });
 
         onSnapshot(doc(db, "settings", "video"), (d) => {
