@@ -8,8 +8,8 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap');
         body { font-family: 'Pyidaungsu', sans-serif; height: 100vh; overflow: hidden; }
-        /* ဇယားအတွက် သီးသန့် Scrollbar */
-        .table-container { max-height: 40vh; overflow-y: auto; }
+        /* ဇယားအတွက် သီးသန့် Scrollbar - Main scroll မဖြစ်အောင် တားထားသည် */
+        .table-container { max-height: 35vh; overflow-y: auto; }
     </style>
 </head>
 <body class="bg-slate-50 flex flex-col h-screen">
@@ -31,11 +31,9 @@
             <!-- Table Section -->
             <section class="bg-white rounded-xl shadow-sm border border-slate-100 p-3 flex-1 flex flex-col overflow-hidden">
                 <div id="data-view" class="flex flex-col h-full">
-                    <!-- Search Input -->
                     <input type="text" id="searchInput" placeholder="ရက်စွဲ (သို့) နေရာဖြင့် ရှာရန်..." 
                            oninput="renderEvents()" class="w-full p-2 mb-2 text-xs rounded-lg border border-slate-200 focus:outline-none">
                     
-                    <!-- Table Area with independent scroll -->
                     <div class="table-container flex-1 overflow-y-auto border rounded-lg">
                         <table class="w-full text-[11px] text-left">
                             <thead class="bg-slate-50 sticky top-0 text-slate-400 uppercase text-[9px]">
@@ -51,14 +49,15 @@
                     </div>
                 </div>
 
+                <!-- Admin Section -->
                 <div id="admin-view" class="hidden space-y-3">
                     <div id="login-form">
                         <input id="adminPass" type="password" placeholder="Admin စကားဝှက်" class="w-full p-2 text-xs rounded-lg border">
                         <button onclick="checkAdmin()" class="w-full mt-2 bg-indigo-900 text-white py-2 rounded-lg text-xs font-bold">ဝင်မည်</button>
                     </div>
                     <div id="admin-controls" class="hidden space-y-2">
-                        <input id="videoLink" type="text" placeholder="Video ID (ဥပမာ v55HWADK2MU)" class="w-full p-2 text-xs rounded-lg border">
-                        <button onclick="updateVideo()" class="w-full bg-blue-600 text-white py-2 rounded-lg text-xs">Video အပ်ဒိတ်</button>
+                        <input id="playlistId" type="text" placeholder="Playlist ID (ဥပမာ PLxxxxxxx)" class="w-full p-2 text-xs rounded-lg border">
+                        <button onclick="updateVideo()" class="w-full bg-blue-600 text-white py-2 rounded-lg text-xs">Playlist အပ်ဒိတ်</button>
                         <hr>
                         <input id="dateInput" type="text" placeholder="DD/MM/YYYY" class="w-full p-2 text-xs rounded-lg border">
                         <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2 text-xs rounded-lg border">
@@ -126,8 +125,9 @@
         };
 
         window.updateVideo = async () => {
-            const vidId = document.getElementById('videoLink').value;
-            const cleanUrl = `https://www.youtube.com/embed/${vidId}?modestbranding=1&rel=0&iv_load_policy=3&disablekb=1&showinfo=0`;
+            const playlistId = document.getElementById('playlistId').value;
+            // Playlist အတွက် URL တည်ဆောက်ပုံ
+            const cleanUrl = `https://www.youtube.com/embed/videoseries?list=${playlistId}&modestbranding=1&rel=0`;
             await setDoc(doc(db, "settings", "video"), { url: cleanUrl });
         };
 
