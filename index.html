@@ -12,7 +12,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
 
-    <div id="toast" class="fixed bottom-5 left-5 right-5 z-50 hidden bg-indigo-900 text-white px-6 py-4 rounded-2xl shadow-2xl text-center">
+    <div id="toast" class="fixed top-5 left-5 right-5 z-50 hidden bg-indigo-900 text-white px-6 py-3 rounded-xl shadow-lg text-center">
         <span id="toast-msg"></span>
     </div>
 
@@ -42,7 +42,7 @@
                 <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-3 rounded-xl border">
                 <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-3 rounded-xl border">
                 <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold active:scale-95 transition">ပွဲစဉ် တင်မည်</button>
-                <button onclick="location.reload()" class="w-full text-slate-400 py-2 text-sm">ထွက်မည်</button>
+                <button onclick="location.reload()" class="w-full text-slate-400 py-2 text-sm">Admin မှ ထွက်မည်</button>
             </div>
         </section>
     </main>
@@ -51,7 +51,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // IMPORTANT: Update this with your actual Firebase Project config!
+        // Firebase Configuration (သင့် Project အချက်အလက်များဖြင့် အစားထိုးပါ)
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -71,6 +71,7 @@
             setTimeout(() => t.classList.add('hidden'), 3000);
         };
 
+        // Admin Data Submission Logic
         window.addEvent = async () => {
             const date = document.getElementById('dateInput').value;
             const location = document.getElementById('locInput').value;
@@ -79,12 +80,17 @@
             if (!date || !location || !troupe) { notify("အချက်အလက်အားလုံးဖြည့်ပါ။"); return; }
 
             try {
-                await addDoc(collection(db, "events"), { date, location, troupe, timestamp: serverTimestamp() });
+                await addDoc(collection(db, "events"), { 
+                    date, 
+                    location, 
+                    troupe, 
+                    createdAt: serverTimestamp() 
+                });
                 notify("အောင်မြင်စွာ တင်ပြီးပါပြီ။");
                 document.getElementById('dateInput').value = '';
                 document.getElementById('locInput').value = '';
                 document.getElementById('troupeInput').value = '';
-            } catch (e) { console.error(e); notify("အမှားအယွင်းရှိပါသည်။"); }
+            } catch (e) { notify("အမှားအယွင်းရှိပါသည်။"); }
         };
 
         window.checkAdmin = () => {
@@ -94,8 +100,8 @@
             } else notify("စကားဝှက်မှားနေပါသည်။");
         };
 
-        // Real-time listener for data persistence
-        onSnapshot(query(collection(db, "events"), orderBy("timestamp", "desc")), (snapshot) => {
+        // Real-time Event Listener (Data won't disappear on refresh)
+        onSnapshot(query(collection(db, "events"), orderBy("createdAt", "desc")), (snapshot) => {
             const container = document.getElementById('schedule-body');
             container.innerHTML = '';
             if (snapshot.empty) {
@@ -105,7 +111,7 @@
             snapshot.forEach((doc) => {
                 const e = doc.data();
                 container.innerHTML += `
-                    <div class="flex items-center p-3 border-b border-slate-100 hover:bg-slate-50 transition">
+                    <div class="flex items-center p-3 border-b border-slate-100">
                         <div class="bg-indigo-100 text-indigo-900 font-bold px-3 py-1 rounded-lg mr-3 text-xs whitespace-nowrap">${e.date}</div>
                         <div>
                             <div class="font-bold text-slate-800 text-sm">${e.location}</div>
