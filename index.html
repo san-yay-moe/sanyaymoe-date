@@ -3,89 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>စမ်းရေမိုး - ဇာတ်ပွဲအချိန်ဇယား ၂၀၂၆-၂၀၂၇</title>
+    <title>စမ်းရေမိုး - ဇာတ်ပွဲအချိန်ဇယား</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        .swiper { width: 100%; height: 350px; }
-        .swiper-slide img { width: 100%; height: 100%; object-fit: cover; }
+        body { font-family: 'Pyidaungsu', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans">
-    <div id="toast" class="fixed top-5 right-5 z-50 hidden bg-indigo-900 text-white px-6 py-3 rounded-lg shadow-xl transition-all duration-300">
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-10">
+
+    <div id="toast" class="fixed top-5 left-5 right-5 z-50 hidden bg-indigo-900 text-white px-6 py-3 rounded-xl shadow-lg text-center">
         <span id="toast-msg"></span>
     </div>
 
-    <header class="bg-indigo-900 text-white p-6 text-center text-3xl font-bold shadow-xl">
-        စမ်းရေမိုး ဇာတ်ပွဲများ (၂၀၂၆-၂၀၂၇)
+    <header class="bg-indigo-900 text-white py-8 px-4 text-center shadow-lg">
+        <h1 class="text-3xl font-bold">စမ်းရေမိုး</h1>
+        <p class="text-indigo-200 mt-1">ဇာတ်ပွဲများ အချိန်ဇယား</p>
     </header>
 
-    <div class="swiper mySwiper mt-4 rounded-xl shadow-lg overflow-hidden max-w-6xl mx-auto">
-        <div class="swiper-wrapper" id="swiper-wrapper">
-            <!-- Dynamic slides loaded from Firebase -->
-            <div class="swiper-slide"><img src="https://placehold.co/1200x400/4f46e5/ffffff?text=စမ်းရေမိုး+ဇာတ်ပွဲများ" alt="Banner 1"></div>
-        </div>
-    </div>
+    <main class="max-w-md mx-auto px-4 py-6">
+        <!-- YouTube Embed Section -->
+        <section class="mb-8">
+            <div class="aspect-video w-full rounded-3xl overflow-hidden shadow-lg bg-slate-200">
+                <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </section>
 
-    <main class="container mx-auto p-4 mt-6">
-        <h2 class="text-2xl font-bold mb-4 text-center text-indigo-900">ပွဲစဉ် အချိန်ဇယား</h2>
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-indigo-800 text-white">
-                    <tr>
-                        <th class="p-4">နေ့စွဲ</th>
-                        <th class="p-4">နေရာ</th>
-                        <th class="p-4">ဇာတ်အဖွဲ့</th>
-                    </tr>
-                </thead>
-                <tbody id="schedule-body" class="divide-y"></tbody>
-            </table>
-        </div>
+        <section class="bg-white rounded-3xl shadow-sm border border-slate-100 p-5 mb-8">
+            <h2 class="text-xl font-bold mb-4 text-indigo-900">📅 လာမည့် ပွဲစဉ်များ</h2>
+            <div id="schedule-body" class="space-y-4">
+                <p class="text-slate-400 text-center py-4">Data များတင်နေသည်...</p>
+            </div>
+        </section>
 
-        <div class="mt-10 p-6 bg-white rounded-xl border border-gray-200 shadow-sm" id="admin-section">
-            <h3 class="text-xl font-bold mb-4 text-indigo-900 text-center">Admin Panel</h3>
-            <div id="login-form" class="max-w-md mx-auto">
-                <input id="adminPass" type="password" placeholder="Admin စကားဝှက်" class="w-full p-3 mb-4 rounded border">
-                <button onclick="checkAdmin()" class="w-full bg-indigo-900 text-white py-3 rounded-lg font-bold hover:bg-indigo-800">ဝင်ရန်</button>
+        <section class="mt-8 mb-12">
+            <div id="login-form" class="bg-white p-6 rounded-3xl shadow-lg border border-indigo-100">
+                <h3 class="font-bold text-slate-700 mb-4 text-center">Admin အတွက်</h3>
+                <input id="adminPass" type="password" placeholder="စကားဝှက်" class="w-full p-4 mb-4 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-indigo-500">
+                <button onclick="checkAdmin()" class="w-full bg-indigo-900 text-white py-3 rounded-xl font-bold active:scale-95 transition">ဝင်မည်</button>
             </div>
             
-            <div id="admin-controls" class="hidden space-y-8">
-                <!-- 1. Schedule Entry Section -->
-                <div>
-                    <h4 class="font-bold text-lg text-indigo-900 mb-3 border-b pb-2">ပွဲစဉ် အသစ်ထည့်ရန်</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <input id="dateInput" type="text" placeholder="နေ့စွဲ (ဥပမာ - ၁-၁၁-၂၀၂၆)" class="p-3 rounded border">
-                        <input id="locInput" type="text" placeholder="နေရာ" class="p-3 rounded border">
-                        <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="p-3 rounded border">
-                        <button onclick="addEvent()" class="col-span-1 md:col-span-3 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700">ပွဲစဉ် တင်မည်</button>
-                    </div>
-                </div>
-
-                <!-- 2. Slider Image Link Management Section -->
-                <div class="border-t pt-6">
-                    <h4 class="font-bold text-lg text-indigo-900 mb-3 border-b pb-2">Slide ပုံများ စီမံရန် (Image Link ထည့်ရန်)</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <input id="bannerUrlInput" type="text" placeholder="ပုံ၏ Link (URL) ထည့်ပါ" class="p-3 rounded border md:col-span-2">
-                        <input id="bannerTitleInput" type="text" placeholder="စာသား/ခေါင်းစဉ် (မထည့်လည်းရ)" class="p-3 rounded border">
-                        <button onclick="addBanner()" class="col-span-1 md:col-span-3 bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700">Slide ပုံသစ်တင်မည်</button>
-                    </div>
-
-                    <!-- Manage Current Slider Images -->
-                    <h5 class="font-medium text-gray-700 mt-4 mb-2">လက်ရှိ တင်ထားသော Slide ပုံများ:</h5>
-                    <div id="admin-banner-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
-                </div>
+            <div id="admin-controls" class="hidden bg-white p-6 rounded-3xl shadow-xl space-y-4 border border-indigo-100">
+                <h3 class="text-xl font-bold text-indigo-900 mb-2">Admin Control</h3>
+                <input id="dateInput" type="text" placeholder="နေ့စွဲ (ဥပမာ - ၁-၁၁-၂၀၂၆)" class="w-full p-3 rounded-xl border">
+                <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-3 rounded-xl border">
+                <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-3 rounded-xl border">
+                <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold active:scale-95 transition">ပွဲစဉ် တင်မည်</button>
+                <button onclick="location.reload()" class="w-full text-slate-400 py-2 text-sm">Admin မှ ထွက်မည်</button>
             </div>
-        </div>
+        </section>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyBBRZLUYhEvThoCscb2ul_JURGSfBjCF4s",
+            apiKey: "AIzaSyBbRZLUYHeVThoCscb2ul_JURGsfBjCF4s",
             authDomain: "birthday-62720.firebaseapp.com",
-            databaseURL: "https://birthday-62720-default-rtdb.firebaseio.com",
             projectId: "birthday-62720",
             storageBucket: "birthday-62720.appspot.com",
             messagingSenderId: "915031456534",
@@ -95,119 +70,63 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Toast Helper Function
         window.notify = (msg) => {
-            const toast = document.getElementById('toast');
+            const t = document.getElementById('toast');
             document.getElementById('toast-msg').innerText = msg;
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
+            t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 3000);
         };
 
-        // Swiper Instance Management
-        let swiperInstance = null;
-        function renderSwiper(banners) {
-            const wrapper = document.getElementById('swiper-wrapper');
-            if (!banners || banners.length === 0) {
-                wrapper.innerHTML = `<div class="swiper-slide"><img src="https://placehold.co/1200x400/indigo/white?text=စမ်းရေမိုး+ဇာတ်ပွဲများ" alt="Default Banner"></div>`;
-            } else {
-                wrapper.innerHTML = banners.map(b => `
-                    <div class="swiper-slide relative">
-                        <img src="${b.url}" alt="${b.title || 'Slide'}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/1200x400/indigo/white?text=Image+Load+Error'">
-                        ${b.title ? `<div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-3 text-center text-lg font-bold">${b.title}</div>` : ''}
-                    </div>
-                `).join('');
-            }
-
-            if (swiperInstance) swiperInstance.destroy(true, true);
-            swiperInstance = new Swiper(".mySwiper", {
-                autoplay: { delay: 3500, disableOnInteraction: false },
-                loop: banners.length > 1
-            });
-        }
-
-        // Fetch Banners Realtime
-        const bannersQuery = query(collection(db, "banners"), orderBy("timestamp", "desc"));
-        onSnapshot(bannersQuery, (snapshot) => {
-            const banners = [];
-            const adminList = document.getElementById('admin-banner-list');
-            adminList.innerHTML = '';
-
-            snapshot.forEach((docSnapshot) => {
-                const b = docSnapshot.data();
-                b.id = docSnapshot.id;
-                banners.push(b);
-
-                // Populate Admin Banner List with Delete Option
-                adminList.innerHTML += `
-                    <div class="bg-gray-50 p-2 rounded border flex flex-col items-center relative group">
-                        <img src="${b.url}" class="h-24 w-full object-cover rounded mb-2" onerror="this.src='https://placehold.co/300x150/gray/white?text=Invalid+URL'">
-                        <span class="text-xs text-gray-600 truncate w-full text-center">${b.title || 'ခေါင်းစဉ်မရှိပါ'}</span>
-                        <button onclick="deleteBanner('${b.id}')" class="mt-2 bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded">ဖျက်မည်</button>
-                    </div>
-                `;
-            });
-
-            renderSwiper(banners);
-        });
-
-        // Fetch Schedule Realtime
-        const q = query(collection(db, "events"), orderBy("timestamp", "desc"));
-        onSnapshot(q, (snapshot) => {
-            const tbody = document.getElementById('schedule-body');
-            tbody.innerHTML = '';
-            snapshot.forEach((doc) => {
-                const event = doc.data();
-                tbody.innerHTML += `<tr class="hover:bg-indigo-50"><td class="p-4 font-medium">${event.date}</td><td class="p-4">${event.location}</td><td class="p-4 text-indigo-700 font-bold">${event.troupe}</td></tr>`;
-            });
-        });
-
-        // Admin Auth
-        window.checkAdmin = () => {
-            if (document.getElementById('adminPass').value === "1234") {
-                document.getElementById('login-form').classList.add('hidden');
-                document.getElementById('admin-controls').classList.remove('hidden');
-                notify("Admin Panel သို့ အောင်မြင်စွာ ဝင်ရောက်ပြီးပါပြီ");
-            } else {
-                notify("စကားဝှက် မှားယွင်းနေပါသည်။");
-            }
-        };
-
-        // Add Event
         window.addEvent = async () => {
             const date = document.getElementById('dateInput').value;
             const location = document.getElementById('locInput').value;
             const troupe = document.getElementById('troupeInput').value;
-            if (date && location && troupe) {
-                await addDoc(collection(db, "events"), { date, location, troupe, timestamp: Date.now() });
+
+            if (!date || !location || !troupe) { notify("အချက်အလက်အားလုံးဖြည့်ပါ။"); return; }
+
+            try {
+                await addDoc(collection(db, "events"), { 
+                    date, 
+                    location, 
+                    troupe, 
+                    createdAt: serverTimestamp() 
+                });
+                notify("အောင်မြင်စွာ တင်ပြီးပါပြီ။");
                 document.getElementById('dateInput').value = '';
                 document.getElementById('locInput').value = '';
                 document.getElementById('troupeInput').value = '';
-                notify("ပွဲစဉ် တင်ပြီးပါပြီ!");
-            } else {
-                notify("အချက်အလက်များကို အပြည့်အစုံ ဖြည့်စွက်ပါ။");
+            } catch (e) { 
+                console.error("Firebase Error:", e);
+                notify("အမှားအယွင်းရှိပါသည်။ Console ကြည့်ပါ။"); 
             }
         };
 
-        // Add Banner
-        window.addBanner = async () => {
-            const url = document.getElementById('bannerUrlInput').value.trim();
-            const title = document.getElementById('bannerTitleInput').value.trim();
-            if (url) {
-                await addDoc(collection(db, "banners"), { url, title, timestamp: Date.now() });
-                document.getElementById('bannerUrlInput').value = '';
-                document.getElementById('bannerTitleInput').value = '';
-                notify("Slide ပုံသစ် တင်ပြီးပါပြီ!");
-            } else {
-                notify("ပုံ၏ Link (URL) ကို ထည့်သွင်းပါ။");
-            }
+        window.checkAdmin = () => {
+            if (document.getElementById('adminPass').value === "1234") {
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('admin-controls').classList.remove('hidden');
+            } else notify("စကားဝှက်မှားနေပါသည်။");
         };
 
-        // Delete Banner
-        window.deleteBanner = async (id) => {
-            await deleteDoc(doc(db, "banners", id));
-            notify("Slide ပုံကို ဖျက်လိုက်ပါပြီ။");
-        };
+        onSnapshot(query(collection(db, "events"), orderBy("createdAt", "desc")), (snapshot) => {
+            const container = document.getElementById('schedule-body');
+            container.innerHTML = '';
+            if (snapshot.empty) {
+                container.innerHTML = '<p class="text-slate-400 text-center py-4">ပွဲစဉ်များ မရှိသေးပါ။</p>';
+                return;
+            }
+            snapshot.forEach((doc) => {
+                const e = doc.data();
+                container.innerHTML += `
+                    <div class="flex items-center p-3 border-b border-slate-100">
+                        <div class="bg-indigo-100 text-indigo-900 font-bold px-3 py-1 rounded-lg mr-3 text-xs whitespace-nowrap">${e.date}</div>
+                        <div>
+                            <div class="font-bold text-slate-800 text-sm">${e.location}</div>
+                            <div class="text-xs text-indigo-600">${e.troupe}</div>
+                        </div>
+                    </div>`;
+            });
+        });
     </script>
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 </body>
 </html>
