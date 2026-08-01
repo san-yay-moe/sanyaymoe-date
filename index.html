@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>စမ်းရေမိုး - ဇာတ်ပွဲအချိန်ဇယားက</title>
+    <title>စမ်းရေမိုး - ဇာတ်ပွဲအချိန်ဇယား</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -51,6 +51,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // IMPORTANT: Update this with your actual Firebase Project config!
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -83,7 +84,7 @@
                 document.getElementById('dateInput').value = '';
                 document.getElementById('locInput').value = '';
                 document.getElementById('troupeInput').value = '';
-            } catch (e) { notify("အမှားအယွင်းရှိပါသည်။"); }
+            } catch (e) { console.error(e); notify("အမှားအယွင်းရှိပါသည်။"); }
         };
 
         window.checkAdmin = () => {
@@ -93,13 +94,18 @@
             } else notify("စကားဝှက်မှားနေပါသည်။");
         };
 
+        // Real-time listener for data persistence
         onSnapshot(query(collection(db, "events"), orderBy("timestamp", "desc")), (snapshot) => {
             const container = document.getElementById('schedule-body');
             container.innerHTML = '';
+            if (snapshot.empty) {
+                container.innerHTML = '<p class="text-slate-400 text-center py-4">ပွဲစဉ်များ မရှိသေးပါ။</p>';
+                return;
+            }
             snapshot.forEach((doc) => {
                 const e = doc.data();
                 container.innerHTML += `
-                    <div class="flex items-center p-3 border-b border-slate-100">
+                    <div class="flex items-center p-3 border-b border-slate-100 hover:bg-slate-50 transition">
                         <div class="bg-indigo-100 text-indigo-900 font-bold px-3 py-1 rounded-lg mr-3 text-xs whitespace-nowrap">${e.date}</div>
                         <div>
                             <div class="font-bold text-slate-800 text-sm">${e.location}</div>
