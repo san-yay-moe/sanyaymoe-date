@@ -7,47 +7,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;600;700&display=swap');
-        body { 
-            font-family: 'Pyidaungsu', sans-serif; 
-            height: 100vh; 
-            overflow: hidden; 
-            background-color: #f1f5f9;
-        }
-        .table-container { 
-            max-height: calc(100vh - 200px); 
-            overflow-y: auto; 
-        }
-        /* Custom scrollbar for mobile touch */
-        .table-container::-webkit-scrollbar {
-            width: 4px;
-        }
-        .table-container::-webkit-scrollbar-thumb {
-            background-color: #cbd5e1;
-            border-radius: 4px;
-        }
-        button:active { 
-            transform: scale(0.97); 
-        }
+        body { font-family: 'Pyidaungsu', sans-serif; height: 100vh; overflow: hidden; background-color: #f1f5f9; }
+        .table-container { max-height: calc(100vh - 200px); overflow-y: auto; }
+        .table-container::-webkit-scrollbar { width: 4px; }
+        .table-container::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+        button:active { transform: scale(0.97); }
     </style>
 </head>
 <body class="flex flex-col h-screen text-slate-800">
 
-    <!-- Header -->
     <header class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 text-white py-3.5 px-4 text-center shadow-lg flex-shrink-0 border-b border-indigo-700/50">
         <h1 class="text-base font-bold tracking-wide">စမ်းရေမိုး</h1>
         <p class="text-indigo-200 text-[10px] font-medium tracking-wider opacity-90">ဇာတ်ပွဲများ အချိန်ဇယား</p>
     </header>
 
-    <!-- Main Content Container -->
     <main class="flex-1 p-3 sm:p-4 overflow-hidden flex flex-col max-w-md w-full mx-auto">
         <section class="bg-white rounded-2xl shadow-md border border-slate-200/80 flex-1 flex flex-col overflow-hidden">
             
-            <!-- User Data View -->
             <div id="data-view" class="flex flex-col h-full p-3">
                 <div class="relative mb-3">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs">🔍</span>
-                    <input type="text" id="searchInput" placeholder="ရက်စွဲ (သို့) နေရာဖြင့် ရှာရန်..." 
-                           oninput="renderEvents()" class="w-full pl-8 pr-3 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all">
+                    <input type="text" id="searchInput" placeholder="ရက်စွဲ (သို့) နေရာဖြင့် ရှာရန်..." oninput="renderEvents()" class="w-full pl-8 pr-3 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 outline-none transition-all">
                 </div>
                 
                 <div class="table-container flex-1 border border-slate-100 rounded-xl overflow-hidden shadow-inner">
@@ -57,6 +37,7 @@
                                 <th class="px-3 py-2.5 whitespace-nowrap">ရက်စွဲ</th>
                                 <th class="px-3 py-2.5">နေရာ</th>
                                 <th class="px-3 py-2.5">ဇာတ်</th>
+                                <th class="px-3 py-2.5 text-center">ဆက်သွယ်ရန်</th>
                                 <th class="px-3 py-2.5 text-center">အခြေအနေ</th>
                             </tr>
                         </thead>
@@ -65,213 +46,98 @@
                 </div>
             </div>
 
-            <!-- Admin View -->
             <div id="admin-view" class="hidden flex-1 p-4 overflow-y-auto">
                 <div id="login-form" class="max-w-xs mx-auto my-auto pt-6">
-                    <div class="text-center mb-4">
-                        <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-2 text-indigo-900 font-bold">🔑</div>
-                        <h2 class="text-sm font-bold text-slate-700">Admin Login</h2>
-                    </div>
-                    <input id="adminPass" type="password" placeholder="စကားဝှက် ရိုက်ထည့်ပါ" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none">
-                    <button onclick="checkAdmin()" class="w-full mt-3 bg-indigo-900 hover:bg-indigo-800 active:bg-indigo-950 text-white py-2.5 rounded-xl text-xs font-bold shadow-md shadow-indigo-900/20 transition-all">ဝင်မည်</button>
+                    <input id="adminPass" type="password" placeholder="စကားဝှက်" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 mb-3 outline-none">
+                    <button onclick="checkAdmin()" class="w-full bg-indigo-900 text-white py-2.5 rounded-xl text-xs font-bold">ဝင်မည်</button>
                 </div>
-
                 <div id="admin-controls" class="hidden space-y-3 pt-2">
-                    <div class="border-b border-slate-100 pb-2">
-                        <h3 class="text-xs font-bold text-indigo-900 flex items-center gap-1">
-                            <span>➕</span> ပွဲစဉ်သစ် ထည့်သွင်းရန်
-                        </h3>
-                    </div>
-                    <div>
-                        <label class="text-[10px] text-slate-500 mb-1 block font-medium">ရက်စွဲ ရွေးချယ်ပါ</label>
-                        <input id="dateInput" type="date" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50">
-                    </div>
-                    <div>
-                        <label class="text-[10px] text-slate-500 mb-1 block font-medium">နေရာ</label>
-                        <input id="locInput" type="text" placeholder="ဥပမာ - ရန်ကုန်" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50">
-                    </div>
-                    <div>
-                        <label class="text-[10px] text-slate-500 mb-1 block font-medium">ဇာတ်အဖွဲ့</label>
-                        <input id="troupeInput" type="text" placeholder="ဥပမာ - စမ်းရေမိုး" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none bg-slate-50">
-                    </div>
-                    <button onclick="addEvent()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 transition-all mt-2">ပွဲစဉ် ထည့်မည်</button>
+                    <input id="dateInput" type="date" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50">
+                    <input id="locInput" type="text" placeholder="နေရာ" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50">
+                    <input id="troupeInput" type="text" placeholder="ဇာတ်အဖွဲ့" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50">
+                    <input id="phoneInput" type="text" placeholder="ဆက်သွယ်ရန် ဖုန်းနံပါတ်" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 bg-slate-50">
+                    <button onclick="addEvent()" class="w-full bg-emerald-600 text-white py-3 rounded-xl text-xs font-bold">ပွဲစဉ် ထည့်မည်</button>
                 </div>
             </div>
-
         </section>
     </main>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="bg-white border-t border-slate-200/80 p-2.5 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] z-50 flex-shrink-0">
+    <nav class="bg-white border-t p-2.5 z-50 flex-shrink-0">
         <div class="flex gap-2 max-w-md mx-auto">
-            <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-2.5 text-[11px] font-bold rounded-xl bg-indigo-900 text-white shadow-sm transition-all flex items-center justify-center gap-1">
-                <span>📅</span> လာမည့်
-            </button>
-            <button onclick="switchTab('done')" id="tab-done" class="flex-1 py-2.5 text-[11px] font-bold rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all flex items-center justify-center gap-1">
-                <span>✅</span> ပြီးဆုံး
-            </button>
-            <button onclick="switchTab('admin')" id="tab-admin" class="flex-1 py-2.5 text-[11px] font-bold rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all flex items-center justify-center gap-1">
-                <span>⚙️</span> Admin
-            </button>
+            <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-2.5 text-[11px] font-bold rounded-xl bg-indigo-900 text-white">လာမည့်</button>
+            <button onclick="switchTab('done')" id="tab-done" class="flex-1 py-2.5 text-[11px] font-bold rounded-xl bg-slate-100 text-slate-600">ပြီးဆုံး</button>
+            <button onclick="switchTab('admin')" id="tab-admin" class="flex-1 py-2.5 text-[11px] font-bold rounded-xl bg-slate-100 text-slate-600">Admin</button>
         </div>
     </nav>
 
-    <!-- Firebase Application Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBbRZLUYHeVThoCscb2ul_JURGsfBjCF4s",
-            authDomain: "birthday-62720.firebaseapp.com",
-            projectId: "birthday-62720",
-            storageBucket: "birthday-62720.appspot.com",
-            messagingSenderId: "915031456534",
-            appId: "1:915031456534:web:04f11ac2cb812a9fb62e37"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const db = getFirestore(initializeApp({ apiKey: "AIzaSyBbRZLUYHeVThoCscb2ul_JURGsfBjCF4s", projectId: "birthday-62720" }));
         let isAdmin = false, currentTab = 'active', allEvents = [];
 
-        // Tab Switching Function
         window.switchTab = (tab) => {
             currentTab = tab;
-            ['active', 'done', 'admin'].forEach(t => {
-                const btn = document.getElementById(`tab-${t}`);
-                if (currentTab === t) {
-                    btn.className = 'flex-1 py-2.5 text-[11px] font-bold rounded-xl bg-indigo-900 text-white shadow-sm transition-all flex items-center justify-center gap-1';
-                } else {
-                    btn.className = 'flex-1 py-2.5 text-[11px] font-bold rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all flex items-center justify-center gap-1';
-                }
-            });
             document.getElementById('data-view').classList.toggle('hidden', currentTab === 'admin');
             document.getElementById('admin-view').classList.toggle('hidden', currentTab !== 'admin');
             renderEvents();
         };
 
-        // Admin Verification
         window.checkAdmin = () => {
             if (document.getElementById('adminPass').value === "1234") {
                 isAdmin = true;
                 document.getElementById('login-form').classList.add('hidden');
                 document.getElementById('admin-controls').classList.remove('hidden');
-                renderEvents();
-            } else { 
-                alert("စကားဝှက် မှားယွင်းနေပါသည်။"); 
             }
         };
 
-        // Add Event to Firebase Firestore
         window.addEvent = async () => {
-            const rawDate = document.getElementById('dateInput').value; // YYYY-MM-DD
+            const rawDate = document.getElementById('dateInput').value;
             const location = document.getElementById('locInput').value.trim();
             const troupe = document.getElementById('troupeInput').value.trim();
+            const phone = document.getElementById('phoneInput').value.trim();
             
-            if (!rawDate || !location || !troupe) {
-                alert("အချက်အလက်များကို ပြည့်စုံစွာ ဖြည့်စွက်ပါ");
-                return;
-            }
-
-            // Convert rawDate (YYYY-MM-DD) to Display Format (D/M/YYYY)
-            const parts = rawDate.split('-');
-            const formattedDate = `${parseInt(parts[2])}/${parseInt(parts[1])}/${parts[0]}`;
-
-            // Check if exact same date and location exist
-            if (allEvents.some(e => e.date === formattedDate && e.location === location)) { 
-                alert("ဒီရက်စွဲ နှင့် နေရာအတွက် ပွဲစဉ် ထည့်သွင်းထားပြီးဖြစ်ပါသည်"); 
-                return; 
-            }
-
-            try {
-                await addDoc(collection(db, "events"), { 
-                    date: formattedDate, 
-                    rawDate: rawDate, // Save ISO date string for robust sorting
-                    location: location, 
-                    troupe: troupe, 
-                    completed: false 
-                });
-                // Clear Inputs
-                document.getElementById('dateInput').value = '';
-                document.getElementById('locInput').value = '';
-                document.getElementById('troupeInput').value = '';
-                alert("ပွဲစဉ် အောင်မြင်စွာ ထည့်သွင်းပြီးပါပြီ");
-            } catch(e) {
-                alert("အမှားအယွင်း ဖြစ်ပေါ်ခဲ့ပါသည်။");
-            }
+            if (!rawDate || !location || !troupe) return alert("အချက်အလက်ဖြည့်ပါ");
+            
+            const p = rawDate.split('-');
+            await addDoc(collection(db, "events"), { 
+                date: `${parseInt(p[2])}/${parseInt(p[1])}/${p[0]}`, 
+                rawDate: rawDate, location, troupe, phone, completed: false 
+            });
+            alert("ထည့်သွင်းပြီးပါပြီ");
         };
 
-        // Action Handlers
         window.markCompleted = async (id) => await updateDoc(doc(db, "events", id), { completed: true });
-        window.deleteEvent = async (id) => {
-            if(confirm("ဒီပွဲစဉ်ကို ဖျက်ရန် သေချာပါသလား?")) {
-                await deleteDoc(doc(db, "events", id));
-            }
-        };
+        window.deleteEvent = async (id) => await deleteDoc(doc(db, "events", id));
 
-        // Helper function to extract timestamps or sortable numeric strings from various date formats
-        function getSortKey(event) {
-            // Priority 1: Use rawDate (YYYY-MM-DD) if available
-            if (event.rawDate) {
-                return new Date(event.rawDate).getTime();
-            }
-            // Priority 2: Parse "D/M/YYYY" or "DD/MM/YYYY" or "D,M,YYYY"
-            if (event.date) {
-                const parts = event.date.split(/[\/\,\.\-]/).map(p => p.trim());
-                if (parts.length === 3) {
-                    const day = parseInt(parts[0], 10);
-                    const month = parseInt(parts[1], 10) - 1;
-                    const year = parseInt(parts[2], 10);
-                    if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                        return new Date(year, month, day).getTime();
-                    }
-                }
-            }
-            return 0; // Default fallback
-        }
-
-        // Render Events to Table
         window.renderEvents = () => {
             const container = document.getElementById('schedule-body');
             const search = document.getElementById('searchInput').value.toLowerCase();
-            
             let filtered = allEvents.filter(e => currentTab === 'active' ? !e.completed : e.completed);
             
-            if (search) {
-                filtered = filtered.filter(e => 
-                    (e.date && e.date.toLowerCase().includes(search)) || 
-                    (e.location && e.location.toLowerCase().includes(search)) ||
-                    (e.troupe && e.troupe.toLowerCase().includes(search))
-                );
-            }
+            if (search) filtered = filtered.filter(e => e.date.includes(search) || e.location.toLowerCase().includes(search));
             
-            // Accurate Chronological Sorting Logic
-            const sorted = filtered.sort((a, b) => getSortKey(a) - getSortKey(b));
+            const sorted = filtered.sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
 
             container.innerHTML = sorted.length ? sorted.map(e => `
-                <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-b-0">
-                    <td class="px-3 py-3 font-semibold text-indigo-950 whitespace-nowrap text-[11px]">${e.date}</td>
-                    <td class="px-3 py-3 font-medium text-slate-800 text-[11px]">${e.location}</td>
-                    <td class="px-3 py-3 text-slate-600 text-[11px]">${e.troupe}</td>
-                    <td class="px-3 py-3 text-center whitespace-nowrap">
-                        ${isAdmin ? `
-                            <button onclick="markCompleted('${e.id}')" title="ပြီးဆုံးအဖြစ် သတ်မှတ်ရန်" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 p-1 rounded-md text-xs mr-1 transition-colors">✔️</button>
-                            <button onclick="deleteEvent('${e.id}')" title="ဖျက်ရန်" class="bg-rose-50 hover:bg-rose-100 text-rose-600 p-1 rounded-md text-xs transition-colors">❌</button>
-                        ` : (e.completed ? '<span class="inline-block px-1.5 py-0.5 bg-slate-100 text-slate-500 text-[10px] rounded-md">ပြီးပါပြီ</span>' : '<span class="inline-block px-1.5 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-semibold rounded-md">လာမည် 🔥</span>')}
+                <tr class="border-b">
+                    <td class="px-3 py-3 text-indigo-950 font-bold">${e.date}</td>
+                    <td class="px-3 py-3 text-slate-800">${e.location}</td>
+                    <td class="px-3 py-3 text-slate-600">${e.troupe}</td>
+                    <td class="px-3 py-3 text-center">
+                        ${e.phone ? `<a href="tel:${e.phone}" class="text-indigo-600 font-bold underline text-[10px]">${e.phone}</a>` : '-'}
+                    </td>
+                    <td class="px-3 py-3 text-center">
+                        ${isAdmin ? `<button onclick="markCompleted('${e.id}')" class="text-green-600 p-1">✔️</button><button onclick="deleteEvent('${e.id}')" class="text-red-600 p-1">❌</button>` 
+                        : (e.completed ? '✅' : '🔥')}
                     </td>
                 </tr>
-            `).join('') : `<tr><td colspan="4" class="text-center py-8 text-slate-400 text-[11px]">
-                <div class="flex flex-col items-center gap-1">
-                    <span class="text-lg">📅</span>
-                    <span>ပွဲစဉ်မရှိသေးပါ။</span>
-                </div>
-            </td></tr>`;
+            `).join('') : '<tr><td colspan="5" class="text-center py-8 text-slate-400">ပွဲစဉ်မရှိသေးပါ။</td></tr>';
         };
 
-        // Firestore Realtime Listener
-        onSnapshot(query(collection(db, "events")), (snapshot) => {
-            allEvents = []; 
-            snapshot.forEach(d => allEvents.push({ id: d.id, ...d.data() })); 
+        onSnapshot(query(collection(db, "events")), (s) => {
+            allEvents = []; s.forEach(d => allEvents.push({ id: d.id, ...d.data() })); 
             renderEvents();
         });
     </script>
