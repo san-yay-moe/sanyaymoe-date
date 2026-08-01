@@ -7,8 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pyidaungsu:wght@400;600;700&display=swap');
-        body { font-family: 'Pyidaungsu', sans-serif; min-height: 100vh; display: flex; flex-direction: column; background-color: #f1f5f9; }
-        .table-container { max-height: calc(100vh - 250px); overflow-y: auto; }
+        body { font-family: 'Pyidaungsu', sans-serif; height: 100vh; display: flex; flex-direction: column; background-color: #f1f5f9; overflow: hidden; }
+        .table-container { flex: 1; overflow-y: auto; }
         .table-container::-webkit-scrollbar { width: 4px; }
         .table-container::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
     </style>
@@ -26,7 +26,7 @@
             <div id="data-view" class="flex flex-col h-full p-3">
                 <input type="text" id="searchInput" placeholder="ရက်စွဲ (သို့) နေရာဖြင့် ရှာရန်..." oninput="renderEvents()" class="w-full p-2 mb-3 text-xs rounded-xl border border-slate-200 bg-slate-50 outline-none">
                 
-                <div class="table-container flex-1 border rounded-xl overflow-hidden">
+                <div class="table-container border rounded-xl overflow-y-auto">
                     <table class="w-full text-xs text-left border-collapse">
                         <thead class="bg-indigo-600 text-white sticky top-0 text-[10px]">
                             <tr>
@@ -48,10 +48,10 @@
                     <button onclick="checkAdmin()" class="w-full bg-indigo-900 text-white py-2 rounded-xl text-xs font-bold mb-4">ဝင်မည်</button>
                     
                     <div class="space-y-3">
-                        <div class="bg-indigo-100 border border-indigo-200 rounded-xl p-3 text-center shadow-sm">
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center shadow-sm">
                             <p class="text-[11px] font-bold text-indigo-900">ဇာတ်ဆရာ ဦးအောင်ကျော်ထွန်း</p>
                         </div>
-                        <div class="bg-emerald-100 border border-emerald-200 rounded-xl p-3 text-center shadow-sm">
+                        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center shadow-sm">
                             <p class="text-[11px] font-bold text-emerald-900">ဇာတ်မင်းသား အပြုံးမင်းသားလေးစမ်းရေမိုး</p>
                         </div>
                     </div>
@@ -108,23 +108,43 @@
 
         window.renderEvents = () => {
             const container = document.getElementById('schedule-body');
-            const filtered = allEvents.filter(e => currentTab === 'active' ? !e.completed : e.completed)
-                                    .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            
+            // Filter and sort events
+            const filtered = allEvents.filter(e => 
+                (currentTab === 'active' ? !e.completed : e.completed) && 
+                (e.location.toLowerCase().includes(search) || e.date.includes(search))
+            ).sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
 
-            container.innerHTML = filtered.length ? filtered.map(e => `
-                <tr class="border-b hover:bg-slate-50">
-                    <td class="p-2 font-bold text-indigo-900">${e.date}</td>
-                    <td class="p-2">${e.location}</td>
-                    <td class="p-2">${e.troupe}</td>
-                    <td class="p-2 text-center">${e.phone ? `<a href="tel:${e.phone}" class="text-indigo-600">📞</a>` : '-'}</td>
-                    <td class="p-2 text-center">
-                        ${isAdmin ? `
-                            ${!e.completed ? `<button onclick="markCompleted('${e.id}')" class="text-emerald-600">✔️</button>` : ''}
-                            ${e.completed ? `<button onclick="deleteEvent('${e.id}')" class="text-rose-600 ml-2">❌</button>` : ''}
-                        ` : (e.completed ? '✅' : '🔥')}
-                    </td>
-                </tr>
-            `).join('') : '<tr><td colspan="5" class="text-center p-4">ပွဲစဉ်မရှိပါ။</td></tr>';
+            // Group by date to avoid repeating same date rows
+            const grouped = filtered.reduce((acc, curr) => {
+                if (!acc[curr.rawDate]) acc[curr.rawDate] = [];
+                acc[curr.rawDate].push(curr);
+                return acc;
+            }, {});
+
+            let html = '';
+            for (const date in grouped) {
+                const events = grouped[date];
+                events.forEach((e, idx) => {
+                    html += `
+                        <tr class="border-b hover:bg-slate-50">
+                            <td class="p-2 font-bold text-indigo-900">${idx === 0 ? e.date : ''}</td>
+                            <td class="p-2">${e.location}</td>
+                            <td class="p-2">${e.troupe}</td>
+                            <td class="p-2 text-center">${e.phone ? `<a href="tel:${e.phone}" class="text-indigo-600">📞</a>` : '-'}</td>
+                            <td class="p-2 text-center">
+                                ${isAdmin ? `
+                                    ${!e.completed ? `<button onclick="markCompleted('${e.id}')" class="text-emerald-600">✔️</button>` : ''}
+                                    ${currentTab === 'done' ? `<button onclick="deleteEvent('${e.id}')" class="text-rose-600 ml-2">❌</button>` : ''}
+                                ` : (e.completed ? '✅' : '🔥')}
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            container.innerHTML = html || '<tr><td colspan="5" class="text-center p-4">ပွဲစဉ်မရှိပါ။</td></tr>';
         };
 
         onSnapshot(query(collection(db, "events")), (s) => {
