@@ -10,7 +10,7 @@
         body { font-family: 'Pyidaungsu', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen">
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-10">
 
     <div id="toast" class="fixed top-5 left-5 right-5 z-50 hidden bg-indigo-900 text-white px-6 py-3 rounded-xl shadow-lg text-center">
         <span id="toast-msg"></span>
@@ -51,14 +51,13 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Configuration (သင့် Project အချက်အလက်များဖြင့် အစားထိုးပါ)
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "YOUR_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyBbRZLUYHeVThoCscb2ul_JURGsfBjCF4s",
+            authDomain: "birthday-62720.firebaseapp.com",
+            projectId: "birthday-62720",
+            storageBucket: "birthday-62720.appspot.com",
+            messagingSenderId: "915031456534",
+            appId: "1:915031456534:web:04f11ac2cb812a9fb62e37"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -71,7 +70,6 @@
             setTimeout(() => t.classList.add('hidden'), 3000);
         };
 
-        // Admin Data Submission Logic
         window.addEvent = async () => {
             const date = document.getElementById('dateInput').value;
             const location = document.getElementById('locInput').value;
@@ -90,7 +88,10 @@
                 document.getElementById('dateInput').value = '';
                 document.getElementById('locInput').value = '';
                 document.getElementById('troupeInput').value = '';
-            } catch (e) { notify("အမှားအယွင်းရှိပါသည်။"); }
+            } catch (e) { 
+                console.error(e);
+                notify("အမှားအယွင်းရှိပါသည်။"); 
+            }
         };
 
         window.checkAdmin = () => {
@@ -100,7 +101,6 @@
             } else notify("စကားဝှက်မှားနေပါသည်။");
         };
 
-        // Real-time Event Listener (Data won't disappear on refresh)
         onSnapshot(query(collection(db, "events"), orderBy("createdAt", "desc")), (snapshot) => {
             const container = document.getElementById('schedule-body');
             container.innerHTML = '';
