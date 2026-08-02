@@ -51,23 +51,15 @@
                         <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center shadow-sm">
                             <p class="text-[11px] font-bold text-indigo-900">ဇာတ်ဆရာ ဦးအောင်ကျော်ထွန်း</p>
                             <div class="flex justify-center gap-4 mt-2">
-                                <a href="https://www.facebook.com/aung.kyawtun.18" target="_blank" class="text-[10px] text-blue-700 font-bold flex items-center gap-1 hover:underline">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874V12h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> Facebook
-                                </a>
-                                <a href="https://www.tiktok.com/@aungkyawtunlinkad" target="_blank" class="text-[10px] text-black font-bold flex items-center gap-1 hover:underline">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.17a6.33 6.33 0 0 0 9.5-5.45V6.71a8.55 8.55 0 0 0 3.77 1.25z"/></svg> TikTok
-                                </a>
+                                <a href="https://www.facebook.com/aung.kyawtun.18" target="_blank" class="text-[10px] text-blue-700 font-bold flex items-center gap-1 hover:underline">Facebook</a>
+                                <a href="https://www.tiktok.com/@aungkyawtunlinkad" target="_blank" class="text-[10px] text-black font-bold flex items-center gap-1 hover:underline">TikTok</a>
                             </div>
                         </div>
                         <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center shadow-sm">
                             <p class="text-[11px] font-bold text-emerald-900">ဇာတ်မင်းသား အပြုံးမင်းသားလေးစမ်းရေမိုး</p>
                             <div class="flex justify-center gap-4 mt-2">
-                                <a href="https://www.facebook.com/profile.php?id=100057651931301" target="_blank" class="text-[10px] text-blue-600 font-bold flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874V12h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg> Facebook
-                                </a>
-                                <a href="https://www.tiktok.com/@sanyaymoe3" target="_blank" class="text-[10px] text-black font-bold flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.17a6.33 6.33 0 0 0 9.5-5.45V6.71a8.55 8.55 0 0 0 3.77 1.25z"/></svg> TikTok
-                                </a>
+                                <a href="https://www.facebook.com/profile.php?id=100057651931301" target="_blank" class="text-[10px] text-blue-600 font-bold flex items-center gap-1">Facebook</a>
+                                <a href="https://www.tiktok.com/@sanyaymoe3" target="_blank" class="text-[10px] text-black font-bold flex items-center gap-1">TikTok</a>
                             </div>
                         </div>
                     </div>
@@ -115,33 +107,35 @@
         window.addEvent = async () => {
             const rawDate = document.getElementById('dateInput').value;
             if (!rawDate) return;
-            
-            // ရက်စွဲတူ ပွဲစဉ်ရှိမရှိ စစ်ဆေးခြင်း
-            const isDuplicate = allEvents.some(e => e.rawDate === rawDate);
-            if (isDuplicate) {
-                alert("ဤရက်စွဲအတွက် ပွဲစဉ်ရှိနှင့်ပြီး ဖြစ်ပါသည်။");
-                return;
-            }
-
             const p = rawDate.split('-');
             await addDoc(collection(db, "events"), { date: `${parseInt(p[2])}/${parseInt(p[1])}/${p[0]}`, rawDate, location: document.getElementById('locInput').value, troupe: document.getElementById('troupeInput').value, phone: document.getElementById('phoneInput').value, completed: false });
         };
 
         window.markCompleted = async (id) => await updateDoc(doc(db, "events", id), { completed: true });
-        window.deleteEvent = async (id) => { await deleteDoc(doc(db, "events", id)); };
+        
+        window.deleteEvent = async (id) => { 
+            if(confirm("သေချာပါသလား?")) {
+                await deleteDoc(doc(db, "events", id));
+                renderEvents();
+            }
+        };
 
         window.renderEvents = () => {
             const container = document.getElementById('schedule-body');
             const search = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allEvents.filter(e => (currentTab === 'active' ? !e.completed : e.completed) && (e.location.toLowerCase().includes(search) || e.date.includes(search)))
-                                    .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
+            
+            const filtered = allEvents
+                .filter(e => (currentTab === 'active' ? !e.completed : e.completed) && (e.location.toLowerCase().includes(search) || e.date.includes(search)))
+                .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
 
             container.innerHTML = filtered.length ? filtered.map(e => `
                 <tr class="border-b hover:bg-slate-50">
                     <td class="p-2 font-bold text-indigo-900">${e.date}</td>
                     <td class="p-2">${e.location}</td>
                     <td class="p-2">${e.troupe}</td>
-                    <td class="p-2 text-center">${e.phone ? `<a href="tel:${e.phone}" class="text-indigo-600">📞</a>` : '-'}</td>
+                    <td class="p-2 text-center">
+                        ${e.phone ? `<a href="tel:${e.phone}" class="text-indigo-600">📞</a>` : '-'}
+                    </td>
                     <td class="p-2 text-center">
                         ${isAdmin ? `
                             ${!e.completed ? `<button onclick="markCompleted('${e.id}')" class="text-emerald-600">✔️</button>` : ''}
